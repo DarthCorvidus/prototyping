@@ -3,6 +3,7 @@ class FileReceiver implements ClientListener {
 	private bool $receive = FALSE;
 	private int $size = 0;
 	private int $left = 0;
+	private int $received = 0;
 	function __construct() {
 		
 	}
@@ -26,10 +27,16 @@ class FileReceiver implements ClientListener {
 		
 	}
 	public function onRead(string $data): void {
+		$this->received += strlen($data);
+	return;
 		if($this->receive == false) {
 			$this->onReadCommand($data);
 		} else {
 			$this->onReadFile($data);
 		}
+	}
+	
+	public function onDisconnect() {
+		echo "Bytes received: ".$this->received.PHP_EOL;
 	}
 }

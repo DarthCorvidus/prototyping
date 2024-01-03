@@ -54,6 +54,7 @@ class StreamHub {
 	private function disconnect(int $key) {
 		echo "Client $key disconnected.".PHP_EOL;
 		fclose($this->clients[$key]);
+		$this->clientListeners[$key]->onDisconnect();
 		unset($this->clients[$key]);
 		unset($this->emptyCount[$key]);
 		unset($this->clientListeners[$key]);

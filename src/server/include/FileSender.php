@@ -28,4 +28,8 @@ class FileSender implements ClientListener {
 	public function onRead(string $data): void {
 		
 	}
+	
+	public function onDisconnect() {
+		;
+	}
 }
