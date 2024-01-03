@@ -36,11 +36,7 @@ class StreamHub {
 		}
 		
 		if($data === false or ($data === "" and $this->emptyCount[$key]==100)) {
-			echo "Client $key disconnected.".PHP_EOL;
-			fclose($this->clients[$key]);
-			unset($this->clients[$key]);
-			unset($this->emptyCount[$key]);
-			unset($this->clientListeners[$key]);
+			$this->disconnect($key);
 		}
 	}
 	
@@ -53,6 +49,14 @@ class StreamHub {
 		$socket = stream_socket_accept($this->server);
 		$listener = $this->serverListener->onConnect($this->clientCount);
 		$this->addClient($socket, $listener);
+	}
+	
+	private function disconnect(int $key) {
+		echo "Client $key disconnected.".PHP_EOL;
+		fclose($this->clients[$key]);
+		unset($this->clients[$key]);
+		unset($this->emptyCount[$key]);
+		unset($this->clientListeners[$key]);
 	}
 	
 	function listen() {
