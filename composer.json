@@ -1,0 +1,102 @@
+{
+	"minimum-stability": "dev",
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "https://github.com/DarthCorvidus/plibv4-epdo",
+			"no-api": true
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/DarthCorvidus/plibv4-terminaltable",
+			"no-api": true
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/DarthCorvidus/plibv4-vtc",
+			"no-api": true
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/DarthCorvidus/plibv4-longeststring",
+			"no-api": true
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/DarthCorvidus/plibv4-uservalue",
+			"no-api": true
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/DarthCorvidus/plibv4-convert",
+			"no-api": true
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/DarthCorvidus/plibv4-validate",
+			"no-api": true
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/DarthCorvidus/plibv4-assert",
+			"no-api": true
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/DarthCorvidus/plibv4-import",
+			"no-api": true
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/DarthCorvidus/plibv4-argv",
+			"no-api": true
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/DarthCorvidus/plibv4-process",
+			"no-api": true
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/DarthCorvidus/plibv4-binary",
+			"no-api": true
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/DarthCorvidus/plibv4-profiler",
+			"no-api": true
+		}
+	],
+	"name": "prototyping/prototyping",
+	"require": {
+		"plibv4/epdo": "dev-main",
+		"plibv4/terminaltable": "dev-main",
+		"plibv4/vtc": "dev-main",
+		"plibv4/longeststring": "dev-main",
+		"plibv4/uservalue": "dev-main",
+		"plibv4/import": "dev-main",
+		"plibv4/argv": "dev-main",
+		"plibv4/process": "dev-main",
+		"plibv4/binary": "dev-main",
+		"plibv4/profiler": "dev-main",
+		"ext-pdo": "*",
+		"ext-pdo_sqlite": "*",
+		"ext-mbstring": "*",
+		"ext-posix": "*"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^9"
+	},
+	"autoload": {
+        "classmap": ["src/"]
+    },
+	"scripts": {
+		"test": "./vendor/bin/phpunit --bootstrap  tests/autoload-composer.php tests/",
+		"testdox": "./vendor/bin/phpunit --bootstrap tests/autoload-composer.php --testdox --colors=always tests/"
+	},
+	"config": {
+		"platform": {
+			"php": "7.4"
+		}
+	}
+}
