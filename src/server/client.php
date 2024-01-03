@@ -1,5 +1,6 @@
 #!/usr/bin/env php
 <?php
+require __DIR__.'/../../vendor/autoload.php';
 class Client {
 	private $client;
 	private $stdin;
@@ -24,16 +25,6 @@ class Client {
 				echo "No activity".PHP_EOL;
 				continue;
 			}
-			#echo "Activity.".PHP_EOL;
-			#foreach($read as $value) {
-				#if($value===$this->stdin) {
-				#	$input = trim(fgets($this->stdin));
-				#	if($input==="") {
-				#		continue;
-				#	}
-				#	echo $input.PHP_EOL;
-				#}
-			#}
 			foreach($write as $socket) {
 				$data = fread($fh, $this->blocksize);
 				fwrite($socket, str_pad($data, $this->blocksize, "\0"));
