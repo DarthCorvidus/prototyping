@@ -40,7 +40,7 @@ class StreamHub {
 			fclose($this->clients[$key]);
 			unset($this->clients[$key]);
 			unset($this->emptyCount[$key]);
-			unset($this->clientListeners);
+			unset($this->clientListeners[$key]);
 		}
 	}
 	
