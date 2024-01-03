@@ -16,6 +16,14 @@ class StreamHub {
 		$this->serverListener = $listener;
 	}
 	
+	public function addClient(mixed $socket, ClientListener $listener) {
+		$this->clients[$this->clientCount] = $socket;
+		stream_set_blocking($this->clients[$this->clientCount], false);
+		$this->emptyCount[$this->clientCount] = 0;
+		$this->clientListeners[$this->clientCount] = $listener;
+		$this->clientCount++;
+	}
+	
 	private function read(int $key): void  {
 		$data = fread($this->clients[$key], $this->clientListeners[$key]->getBlockSize());
 		if($data==="") {
@@ -37,11 +45,9 @@ class StreamHub {
 	}
 	
 	private function connect() {
-		$this->clients[$this->clientCount] = stream_socket_accept($this->server);
-		stream_set_blocking($this->clients[$this->clientCount], false);
-		$this->emptyCount[$this->clientCount] = 0;
-		$this->clientListeners[$this->clientCount] = $this->serverListener->onConnect($this->clientCount);
-		$this->clientCount++;
+		$socket = stream_socket_accept($this->server);
+		$listener = $this->serverListener->onConnect($this->clientCount);
+		$this->addClient($socket, $listener);
 	}
 	
 	function listen() {
