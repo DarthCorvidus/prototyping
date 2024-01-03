@@ -3,5 +3,5 @@ interface ClientListener {
 	function getBlocksize(): int;
 	function onRead(string $data): void;
 	function hasWrite(): bool;
-	function getWrite(): string;
+	function getWrite(int $amount): string;
 }

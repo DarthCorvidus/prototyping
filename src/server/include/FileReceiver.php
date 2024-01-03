@@ -15,7 +15,7 @@ class FileReceiver implements ClientListener {
 		}
 	}
 
-	public function getWrite(): string {
+	public function getWrite(int $amount): string {
 		
 	}
 
