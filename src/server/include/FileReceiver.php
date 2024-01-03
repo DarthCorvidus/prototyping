@@ -20,7 +20,7 @@ class FileReceiver implements ClientListener {
 	}
 
 	public function hasWrite(): bool {
-		
+		return false;
 	}
 	private function onReadCommand(string $data): void {
 		
