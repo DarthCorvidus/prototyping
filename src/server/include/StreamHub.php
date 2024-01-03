@@ -44,6 +44,11 @@ class StreamHub {
 		}
 	}
 	
+	private function write($key): void {
+		$data = $this->clientListeners[$key]->getWrite($this->clientListeners[$key]->getBlocksize());
+		fwrite($this->clients[$key], $data);
+	}
+	
 	private function connect() {
 		$socket = stream_socket_accept($this->server);
 		$listener = $this->serverListener->onConnect($this->clientCount);
@@ -54,13 +59,16 @@ class StreamHub {
 		$i = 0;
 		while(TRUE) {
 			$read = array();
+			$write = array();
 			if($this->server!=null) {
 				$read["server"] = $this->server;
 			}
 			foreach($this->clients as $key => $value) {
 				$read[$key] = $value;
+				if($this->clientListeners[$key]->hasWrite()) {
+					$write[$key] = $value;
+				}
 			}
-			$write = array();
 			try {
 				if(@stream_select($read, $write, $except, $tv_sec = 5) < 1) {
 					#echo "No activity".PHP_EOL;
@@ -77,6 +85,9 @@ class StreamHub {
 					continue;
 				}
 				$this->read($key);
+			}
+			foreach($write as $key => $value) {
+				$this->write($key);
 			}
 		}
 	}
