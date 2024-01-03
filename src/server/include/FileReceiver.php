@@ -11,7 +11,7 @@ class FileReceiver implements ClientListener {
 		if($this->receive == true) {
 			return 1024*8;
 		} else {
-			return 512;
+			return 1024;
 		}
 	}
 

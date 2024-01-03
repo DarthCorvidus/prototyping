@@ -2,26 +2,28 @@
 class StreamHub {
 	private $server;
 	private array $clients;
-	private int $blocksize = 1024*1;
+	#private int $blocksize = 1024*1;
 	private int $clientCount = 0;
 	private array $emptyCount;
-	private array $listener;
+	private ServerListener $serverListener;
+	private array $clientListeners;
 	function __construct() {
 		$this->clients = array();
 	}
 	
-	public function setServer(mixed $socket) {
+	public function setServer(mixed $socket, ServerListener $listener) {
 		$this->server = $socket;
+		$this->serverListener = $listener;
 	}
 	
 	private function read(int $key): void  {
-		$data = fread($this->clients[$key], $this->listener[$key]->getBlockSize());
+		$data = fread($this->clients[$key], $this->clientListeners[$key]->getBlockSize());
 		if($data==="") {
 			$this->emptyCount[$key]++;
 		}
 		if($data !== false and $data !== "") {
 			$this->emptyCount[$key] = 0;
-			$this->listener[$key]->onRead($data);
+			$this->clientListeners[$key]->onRead($data);
 		return;
 		}
 		
@@ -30,8 +32,16 @@ class StreamHub {
 			fclose($this->clients[$key]);
 			unset($this->clients[$key]);
 			unset($this->emptyCount[$key]);
-			print_r($this);
+			unset($this->clientListeners);
 		}
+	}
+	
+	private function connect() {
+		$this->clients[$this->clientCount] = stream_socket_accept($this->server);
+		stream_set_blocking($this->clients[$this->clientCount], false);
+		$this->emptyCount[$this->clientCount] = 0;
+		$this->clientListeners[$this->clientCount] = $this->serverListener->onConnect($this->clientCount);
+		$this->clientCount++;
 	}
 	
 	function listen() {
@@ -57,12 +67,7 @@ class StreamHub {
 			foreach($read as $key => $value) {
 				#echo "Activity on ".$key.PHP_EOL;
 				if($value===$this->server) {
-					$this->clients[$this->clientCount] = stream_socket_accept($this->server);
-					stream_set_blocking($this->clients[$this->clientCount], false);
-					$this->emptyCount[$this->clientCount] = 0;
-					$this->listener[$this->clientCount] = new FileReceiver();
-					echo "Accepted connection with id ".$this->clientCount.".".PHP_EOL;
-					$this->clientCount++;
+					$this->connect();
 					continue;
 				}
 				$this->read($key);

@@ -6,7 +6,7 @@ class Server {
 	function __construct() {
 		$this->streamHub = new StreamHub();
 		$server = stream_socket_server("tcp://0.0.0.0:8000", $errno, $errstr);
-		$this->streamHub->setServer($server);
+		$this->streamHub->setServer($server, new FileServerListener());
 	}
 	
 	function run() {
