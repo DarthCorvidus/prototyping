@@ -9,11 +9,11 @@ namespace input;
 class StreamHub {
 	private mixed $input;
 	private mixed $output;
-	private InputListener $inputListener;
-	function __construct(InputListener $inputListener) {
+	private ReadListener $readListener;
+	function __construct(ReadListener $readListener) {
 		$this->input = STDIN;
 		$this->output =STDOUT;
-		$this->inputListener = $inputListener;
+		$this->readListener = $readListener;
 	}
 	
 	private function read(array $read): void {
@@ -22,7 +22,7 @@ class StreamHub {
 			if($input === "") {
 				return;
 			}
-			$this->inputListener->onInput(new ReadEvent($input));
+			$this->readListener->onRead(new ReadEvent($input));
 		}
 	}
 

@@ -6,6 +6,6 @@
  */
 
 namespace input;
-interface InputListener {
-	function onInput(ReadEvent $e);
+interface ReadListener {
+	function onRead(ReadEvent $e);
 }

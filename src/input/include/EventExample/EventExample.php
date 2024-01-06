@@ -1,6 +1,7 @@
 <?php
-class EventExample implements \input\InputListener {
-	public function onInput(\input\ReadEvent $re) {
-		echo $re->getData().PHP_EOL;
+class EventExample implements \input\ReadListener {
+	public function onRead(\input\ReadEvent $re) {
+		$data = $re->getData();
+		echo $data.PHP_EOL;
 	}
 }
