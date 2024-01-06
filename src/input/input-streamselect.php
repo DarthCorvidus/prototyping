@@ -6,9 +6,10 @@ class InputStreamSelect {
 	private int $count;
 	private bool $counting = false;
 	private int $last;
-	private array $writeBuffer = array();
+	private OutputBuffer $outputBuffer;
 	function __construct() {
 		$this->lazy = new Lazy();
+		$this->outputBuffer = new OutputBuffer();
 	}
 	
 	private function count() {
@@ -34,13 +35,13 @@ class InputStreamSelect {
 				return;
 			}
 			if($input == "help") {
-				$this->writeBuffer += $this->lazy->getHelp();
+				$this->outputBuffer->addlnArray($this->lazy->getHelp());
 			}
 			if($input == "date") {
-				$this->writeBuffer += $this->lazy->getDate();
+				$this->outputBuffer->addlnArray($this->lazy->getDate());
 			}
 			if($input == "uptime") {
-				$this->writeBuffer += $this->lazy->getUptime();
+				$this->outputBuffer->addlnArray($this->lazy->getDate());
 			}
 			
 			#if($input == "count") {
@@ -57,8 +58,8 @@ class InputStreamSelect {
 	
 	public function write(array $write): void {
 		foreach($write as $value) {
-			$line = array_shift($this->writeBuffer);
-			fwrite($value, $line.PHP_EOL);
+			$line = $this->outputBuffer->getNext();
+			fwrite($value, $line);
 		}
 	}
 	
@@ -76,7 +77,7 @@ class InputStreamSelect {
 			 * NOTE: from another project I know that doing it wrong has a
 			 * measurable performance impact.
 			 */
-			if(count($this->writeBuffer)>0) {
+			if(!$this->outputBuffer->isEmpty()) {
 				$write = array(STDOUT);
 			}
 			if(stream_select($read, $write, $except, 0, 2000)<1) {
