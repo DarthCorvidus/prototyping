@@ -26,20 +26,11 @@ class InputStreamSelect {
 		}
 	}
 	
-	function loop() {
-		echo "Enter 'help' for help!".PHP_EOL;
-		stream_set_blocking(STDIN, false);
-		while(true) {
-			$read = array(STDIN);
-			$write = array();
-			$except = null;
-			#$write = array(STDOUT);
-			if(stream_select($read, $write, $except, 0, 2000)<1) {
-				continue;
-			}
-			$input = trim(fgets(STDIN));
+	private function read(array $read){
+		foreach($read as $value) {
+			$input = trim(fgets($value));
 			if($input === "") {
-				continue;
+				return;
 			}
 			if($input == "help") {
 				echo implode(PHP_EOL, $this->lazy->getHelp()).PHP_EOL;
@@ -51,15 +42,30 @@ class InputStreamSelect {
 				echo implode(PHP_EOL, $this->lazy->getUptime()).PHP_EOL;
 			}
 			
-			if($input == "count") {
-				$this->count = 0;
-				$this->counting = true;
-				$this->last = hrtime()[0];
-			}
-			
+			#if($input == "count") {
+			#	$this->count = 0;
+			#	$this->counting = true;
+			#	$this->last = hrtime()[0];
+			#}
+
 			if($input == "exit") {
 				exit();
 			}
+		}
+	}
+	
+	function loop() {
+		echo "Enter 'help' for help!".PHP_EOL;
+		stream_set_blocking(STDIN, false);
+		while(true) {
+			$read = array(STDIN);
+			$write = array();
+			$except = null;
+			#$write = array(STDOUT);
+			if(stream_select($read, $write, $except, 0, 2000)<1) {
+				continue;
+			}
+			$this->read($read);
 		}
 	}
 }
