@@ -51,8 +51,10 @@ class InputStreamSelect {
 			#}
 
 			if($input == "exit") {
+				$this->outputBuffer->addln("Goodbye!");
 				exit();
 			}
+			$this->outputBuffer->add("> ");
 		}
 	}
 	
@@ -65,6 +67,7 @@ class InputStreamSelect {
 	
 	function loop() {
 		echo "Enter 'help' for help!".PHP_EOL;
+		$this->outputBuffer->add("> ");
 		stream_set_blocking(STDIN, false);
 		while(true) {
 			$read = array(STDIN);
