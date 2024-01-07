@@ -4,9 +4,11 @@ require __DIR__.'/../../vendor/autoload.php';
 class InputStreamSelect {
 	private StreamHandler $streamHandler;
 	private OutputBuffer $outputBuffer;
+	private Timers $timers;
 	function __construct() {
+		$this->timers = new Timers(1000000);
 		$this->outputBuffer = new OutputBuffer();
-		$this->streamHandler = new UserHandler();
+		$this->streamHandler = new UserHandler($this->timers);
 	}
 	
 	private function read(array $read): void {
@@ -50,9 +52,11 @@ class InputStreamSelect {
 				$write = array(STDOUT);
 			}
 			
-			if(stream_select($read, $write, $except, 0, 2000)<1) {
+			if(stream_select($read, $write, $except, 0, $this->timers->getLowest())<1) {
+				$this->timers->execute();
 				continue;
 			}
+			$this->timers->execute();
 			$this->read($read);
 			$this->write($write);
 		}

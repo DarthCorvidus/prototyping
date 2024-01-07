@@ -1,10 +1,13 @@
 <?php
-class UserHandler implements StreamHandler {
+class UserHandler implements StreamHandler, Timer {
 	private Lazy $lazy;
 	private $buffer = array();
 	private $ended = false;
-	function __construct() {
+	private Timers $timers;
+	private $count = 0;
+	function __construct(Timers $timer) {
 		$this->lazy = new Lazy();
+		$this->timers = $timer;
 	}
 	public function getBlockSize(): int {
 		return 1024;
@@ -12,6 +15,15 @@ class UserHandler implements StreamHandler {
 
 	public function getData(): string {
 		return array_shift($this->buffer);
+	}
+	
+	function onEvent() {
+		$this->count++;
+		$this->buffer[] = $this->count;
+		if($this->count == 10) {
+			$this->timers->removeTimer($this);
+			$this->count = 0;
+		}
 	}
 
 	public function handleData(string $data): void {
@@ -26,6 +38,11 @@ class UserHandler implements StreamHandler {
 		if($data === "help") {
 			$this->buffer += $this->lazy->getHelp();
 			return;
+		}
+		
+		if($data == "count") {
+			$this->timers->addTimer(1000000, $this);
+		return;
 		}
 
 		if($data === "exit") {
