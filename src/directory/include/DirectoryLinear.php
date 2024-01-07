@@ -28,7 +28,7 @@ class DirectoryLinear {
 	}
 	
 	function run(): bool {
-		while($path = array_shift($this->stack)) {
+		while($path = array_pop($this->stack)) {
 			$this->count++;
 			try {
 				$iterator = new DirectoryIterator($path);
