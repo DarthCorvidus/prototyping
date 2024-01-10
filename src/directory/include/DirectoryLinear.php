@@ -3,9 +3,35 @@ class DirectoryLinear {
 	private string $path;
 	private array $stack;
 	private int $count = 0;
+	private ?DirectoryObserver $do = null;
 	function __construct(string $path) {
 		$this->path = $path;
 		$this->stack[] = $path;
+	}
+	
+	function addDirectoryObserver(DirectoryObserver $observer) {
+		$this->do = $observer;
+	}
+
+	private function handleEntry(SplFileInfo $entry) {
+		try {
+			$type = $entry->getType();
+		} catch(\RuntimeException $e) {
+			echo $this->do->onError($e);
+			return;
+		}
+		if($type==="file") {
+			$this->do->onFile($entry);
+			return;
+		}
+		if($type==="dir") {
+			$this->do->onDirectory($entry);
+			return;
+		}
+		if($type==="link") {
+			$this->do->onLink($entry);
+			return;
+		}
 	}
 	
 	private function iterate(DirectoryIterator $iterator) {
@@ -13,6 +39,10 @@ class DirectoryLinear {
 			if($fileInfo->isDot()) {
 				continue;
 			}
+			if($this->do!==null) {
+				$this->handleEntry($fileInfo);
+			}
+			
 			if($fileInfo->isLink()) {
 				continue;
 			}
