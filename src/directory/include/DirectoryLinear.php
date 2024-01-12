@@ -1,5 +1,5 @@
 <?php
-class DirectoryLinear {
+class DirectoryLinear implements Timeshared {
 	private string $path;
 	private array $stack;
 	private int $count = 0;
