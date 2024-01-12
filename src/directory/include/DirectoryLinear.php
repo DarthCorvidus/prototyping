@@ -4,6 +4,7 @@ class DirectoryLinear {
 	private array $stack;
 	private int $count = 0;
 	private ?DirectoryObserver $do = null;
+	private ?DirectoryIterator $current = null;
 	function __construct(string $path) {
 		$this->path = $path;
 		$this->stack[] = $path;
@@ -34,39 +35,50 @@ class DirectoryLinear {
 		}
 	}
 	
-	private function iterate(DirectoryIterator $iterator) {
-		foreach($iterator as $fileInfo) {
-			if($fileInfo->isDot()) {
-				continue;
-			}
-			if($this->do!==null) {
-				$this->handleEntry($fileInfo);
-			}
+	function run() {
+		while($this->step()) {
 			
-			if($fileInfo->isLink()) {
-				continue;
-			}
-			if($fileInfo->isDir()) {
-				$newpath = $fileInfo->getRealPath();
-				//echo $newpath.PHP_EOL;
-				if($newpath === "" or $newpath === false) {
-					continue;
-				}
-				$this->stack[] = $newpath;
-			}
 		}
 	}
 	
-	function run(): bool {
-		while($path = array_pop($this->stack)) {
-			$this->count++;
+	private function stepStack(): bool {
+		$nextpath = array_pop($this->stack);
+		if($nextpath !== null) {
 			try {
-				$iterator = new DirectoryIterator($path);
+				$this->current = new DirectoryIterator($nextpath);
 			} catch(UnexpectedValueException $e) {
-				continue;
+				echo $e->getMessage().PHP_EOL;
+				return true;
 			}
-			$this->iterate($iterator);
+			return true;
 		}
 	return false;
+	}
+	
+	private function stepEntry(): bool {
+		if($this->current === null) {
+			return false;
+		}
+
+		if(!$this->current->valid()) {
+			$this->current = null;
+			return false;
+		}
+		$current = $this->current->current();
+		if($this->do !== null) {
+			$this->handleEntry($current);
+		}
+		if(!$current->isLink() && $current->isDir() && !$current->isDot()) {
+			$this->stack[] = $current->getRealPath();
+		}
+		$this->current->next();
+	return true;
+	}
+	
+	function step(): bool {
+		if($this->stepEntry()) {
+			return true;
+		}
+	return $this->stepStack();
 	}
 }
