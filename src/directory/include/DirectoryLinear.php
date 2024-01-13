@@ -5,6 +5,7 @@ class DirectoryLinear implements Timeshared {
 	private int $count = 0;
 	private ?DirectoryObserver $do = null;
 	private ?DirectoryIterator $current = null;
+	private bool $started = false;
 	function __construct(string $path) {
 		$this->path = $path;
 		$this->stack[] = $path;
@@ -42,6 +43,12 @@ class DirectoryLinear implements Timeshared {
 	}
 	
 	private function stepStack(): bool {
+		if(!$this->started) {
+			$this->started = true;
+			if($this->do !== null) {
+				$this->do->onStart();
+			}
+		}
 		$nextpath = array_pop($this->stack);
 		if($nextpath !== null) {
 			try {
@@ -51,6 +58,9 @@ class DirectoryLinear implements Timeshared {
 				return true;
 			}
 			return true;
+		}
+		if($this->do  !== null) {
+			$this->do->onEnd();
 		}
 	return false;
 	}
