@@ -35,6 +35,16 @@ class ReadInput implements Timeshared {
 			$dir->addDirectoryObserver(new DirectorySize());
 			$this->timeshare->addTimeshared($dir);
 		}
+		
+		if($command[0] == "sha1") {
+			if(!is_dir($command[1])) {
+				echo "Path ".$command[1]." does not exist or is no directory".PHP_EOL;
+			return;
+			}
+			$dir = new DirectoryLinear($command[1]);
+			$dir->addDirectoryObserver(new DirectorySHA());
+			$this->timeshare->addTimeshared($dir);
+		}
 	}
 	
 	public function step(): bool {
