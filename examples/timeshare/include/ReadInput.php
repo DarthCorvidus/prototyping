@@ -1,9 +1,9 @@
 <?php
 class ReadInput implements Timeshared {
-	private Timeshare $timeshare;
-	function __construct(Timeshare $timeshare) {
+	#private Timeshare $timeshare;
+	function __construct() {
 		stream_set_blocking(STDIN, false);
-		$this->timeshare = $timeshare;
+		#$this->timeshare = $timeshare;
 	}
 
 	private function handleCommand(string $command): void {
@@ -21,6 +21,8 @@ class ReadInput implements Timeshared {
 	private function handleOne($command): void {
 		if($command === "help") {
 			echo "du <dir>      disk usage".PHP_EOL;
+			echo "sha1 <dir>    create SHA1 sum for each file in <dir>".PHP_EOL;
+			echo "rnd <int>     creates <int> amount of strings and their SHA1 sum".PHP_EOL;
 			echo "exit          exit program".PHP_EOL;
 		}
 	}
@@ -33,7 +35,7 @@ class ReadInput implements Timeshared {
 			}
 			$dir = new DirectoryLinear($command[1]);
 			$dir->addDirectoryObserver(new DirectorySize());
-			$this->timeshare->addTimeshared($dir);
+			Timeshare::addTimeshared($dir);
 		}
 		
 		if($command[0] == "sha1") {
@@ -43,12 +45,12 @@ class ReadInput implements Timeshared {
 			}
 			$dir = new DirectoryLinear($command[1]);
 			$dir->addDirectoryObserver(new DirectorySHA());
-			$this->timeshare->addTimeshared($dir);
+			Timeshare::addTimeshared($dir);
 		}
 		
 		if($command[0] == "rnd") {
 			$rnd = new Randomizer((int)$command[1]);
-			$this->timeshare->addTimeshared($rnd);
+			Timeshare::addTimeshared($rnd);
 		}
 	}
 	
@@ -62,6 +64,7 @@ class ReadInput implements Timeshared {
 			return true;
 		}
 		if($trimmed === "exit") {
+			Timeshare::stop();
 			return false;
 		}
 		$this->handleCommand($trimmed);

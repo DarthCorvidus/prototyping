@@ -2,8 +2,8 @@
 <?php
 require __DIR__.'/../../vendor/autoload.php';
 
-$timeshare = new Timeshare();
-$input = new ReadInput($timeshare);
-$timeshare->addTimeshared($input);
-$timeshare->run();
+#$timeshare = new Timeshare();
+$input = new ReadInput();
+Timeshare::addTimeshared($input);
+Timeshare::run();
 echo "End of program.".PHP_EOL;
