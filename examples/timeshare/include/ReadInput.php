@@ -45,6 +45,11 @@ class ReadInput implements Timeshared {
 			$dir->addDirectoryObserver(new DirectorySHA());
 			$this->timeshare->addTimeshared($dir);
 		}
+		
+		if($command[0] == "rnd") {
+			$rnd = new Randomizer((int)$command[1]);
+			$this->timeshare->addTimeshared($rnd);
+		}
 	}
 	
 	public function step(): bool {
