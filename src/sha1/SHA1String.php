@@ -9,6 +9,7 @@ class SHA1String extends SHA1 {
 		while(((strlen($string) + 8) % 64) !== 0) {
 			$string .= chr(0);
 		}
+		// length in bit as 64bit integer
 		$string .= \IntVal::uint64BE()->putValue($bitsize);
 	return $string;
 	}
