@@ -1,10 +1,15 @@
 <?php
 abstract class SHA1 {
-	protected int $h0 = 0x67452301;
-	protected int $h1 = 0xEFCDAB89;
-	protected int $h2 = 0x98BADCFE;
-	protected int $h3 = 0x10325476;
-	protected int $h4 = 0xC3D2E1F0;
+	const H0 = 0x67452301;
+	const H1 = 0xEFCDAB89;
+	const H2 = 0x98BADCFE;
+	const H3 = 0x10325476;
+	const H4 = 0xC3D2E1F0;
+	protected int $v0 = self::H0;
+	protected int $v1 = self::H1;
+	protected int $v2 = self::H2;
+	protected int $v3 = self::H3;
+	protected int $v4 = self::H4;
 	static function rotateLeft(int $rl, int $n): int {
 		// Shift the integer to the left:
 		$left = ($rl << $n);
@@ -50,5 +55,34 @@ abstract class SHA1 {
 		}
 	return $w;
 	}
-
+	
+	static function getSHA(int $i, int $b, int $c, int $d) {
+		if($i>=0 and $i<=19) {
+			return ($b & $c) | (~$b & $d);
+		}
+		if($i>=20 and $i<=39) {
+			return $b ^ $c ^ $d;
+		}
+		if($i>=40 and $i<=59) {
+			return ($b & $c) | ($b & $d) | ($c & $d);
+		}
+		if($i>=60 and $i<=79) {
+			return $b ^ $c ^ $d;
+		}
+	}
+	
+	static function getK(int $i): int {
+		if($i>=0 and $i<=19) {
+			return 0x5A827999;
+		}
+		if($i>=20 and $i<=39) {
+			return 0x6ED9EBA1;
+		}
+		if($i>=40 and $i<=59) {
+			return 0x8F1BBCDC;
+		}
+		if($i>=60 and $i<=79) {
+			return 0xCA62C1D6;
+		}
+	}
 }
