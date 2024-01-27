@@ -36,5 +36,19 @@ abstract class SHA1 {
 		$rid = $union & 0xFFFFFFFF;
 	return $rid;
 	}
+	/**
+	 * @param string $string 64bytes/512 bit
+	 */
+	static function expand(string $string): array {
+		$split = str_split($string, 4);
+		$w = [];
+		foreach ($split as $value) {
+			$w[] = IntVal::uint32BE()->getValue($value);
+		}
+		for($i=16;$i<80;$i++) {
+			$w[] = self::rotateLeft($w[$i-3] ^ $w[$i-8] ^ $w[$i-14] ^ $w[$i-16], 1);
+		}
+	return $w;
+	}
 
 }
