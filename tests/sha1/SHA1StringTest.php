@@ -37,5 +37,16 @@ class SHA1StringTest extends TestCase {
 		$this->assertEquals(64, strlen($expected));
 		$this->assertEquals($expected, $prepared);
 	}
+	function testGetHashEmpty() {
+		$sha1 = new SHA1String("");
+		$expected = sha1("");
+		$this->assertEquals($expected, $sha1->getHash());
+	}
+	
+	function testGetHash() {
+		$sha1 = new SHA1String('password');
+		$expected = sha1("password");
+		$this->assertEquals($expected, $sha1->getHash());
+	}
 }
 
