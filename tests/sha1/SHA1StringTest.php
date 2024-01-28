@@ -14,15 +14,15 @@ class SHA1StringTest extends TestCase {
 		$this->assertEquals($expected, $prepared);
 	}
 	
-	function testPrepareMessage512() {
-		$message = random_bytes(512);
+	function testPrepareMessage512Bit() {
+		$message = random_bytes(64);
 		$prepared = SHA1String::prepareMessage($message);
 		$pad = chr(128). str_repeat("\0", 55);
-		$size = str_repeat("\0", 6).chr(16).chr(0);
+		$size = str_repeat("\0", 6).chr(2).chr(0);
 		$expected = $message.$pad.$size;
 		
-		$this->assertEquals(576, strlen($prepared));
-		$this->assertEquals(576, strlen($expected));
+		$this->assertEquals(128, strlen($prepared));
+		$this->assertEquals(128, strlen($expected));
 		$this->assertEquals($expected, $prepared);
 	}
 	
