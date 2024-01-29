@@ -38,6 +38,75 @@ class SHA1StringTest extends TestCase {
 		$this->assertEquals($expected, $prepared);
 	}
 	
+	function testGetChunk() {
+		$message = random_bytes(3814);
+		$sha1 = new SHA1String($message);
+	
+		$expected = str_split($message, 64);
+		$pad = chr(128). str_repeat("\0", 17);
+		$size = str_repeat("\0", 6).chr(119).chr(48);
+		$expected[59] .= $pad.$size;
+		
+		$chunks = array();
+		while($chunk = $sha1->getChunk()) {
+			$chunks[] = $chunk;
+		}
+		$this->assertEquals(60, count($chunks));
+		$this->assertEquals(60, count($expected));
+		$this->assertEquals($expected, $chunks);
+	}
+	function testGetChunk56() {
+		$message = random_bytes(56);
+		$sha1 = new SHA1String($message);
+	
+		$expected[] = $message.chr(128). str_repeat("\0", 7);
+		$pad = str_repeat("\0", 56);
+		$size = str_repeat("\0", 6).chr(1).chr(192);
+		$expected[] .= $pad.$size;
+		
+		$chunks = array();
+		while($chunk = $sha1->getChunk()) {
+			$chunks[] = $chunk;
+		}
+		$this->assertEquals(2, count($chunks));
+		#$this->assertEquals(2, count($expected));
+		$this->assertEquals($expected, $chunks);
+	}
+
+	function testGetChunk64() {
+		$message = random_bytes(64);
+		$sha1 = new SHA1String($message);
+	
+		$expected[] = $message;
+		$pad = chr(128). str_repeat("\0", 55);
+		$size = str_repeat("\0", 6).chr(2).chr(0);
+		$expected[] .= $pad.$size;
+		
+		$chunks = array();
+		while($chunk = $sha1->getChunk()) {
+			$chunks[] = $chunk;
+		}
+		$this->assertEquals(2, count($chunks));
+		$this->assertEquals($expected, $chunks);
+	}
+
+	function testGetChunk63() {
+		$message = random_bytes(63);
+		$sha1 = new SHA1String($message);
+	
+		$expected[] = $message.chr(128);
+		$pad = str_repeat("\0", 56);
+		$size = str_repeat("\0", 6).chr(1).chr(248);
+		$expected[] .= $pad.$size;
+		
+		$chunks = array();
+		while($chunk = $sha1->getChunk()) {
+			$chunks[] = $chunk;
+		}
+		$this->assertEquals(2, count($chunks));
+		$this->assertEquals($expected, $chunks);
+	}
+	
 	function testGetHashEmpty() {
 		$sha1 = new SHA1String("");
 		$expected = sha1("");
