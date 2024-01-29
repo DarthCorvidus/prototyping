@@ -1,9 +1,10 @@
 <?php
 class SHA1String extends SHA1 {
-	private $message;
+	private string $message;
 	function __construct(string $message) {
 		$this->message = $message;
 	}
+	
 	static function prepareMessage(string $string): string {
 		// length of message in bits
 		$bitsize = strlen($string) * 8;
@@ -19,15 +20,23 @@ class SHA1String extends SHA1 {
 	}
 	
 	function getHash() {
-		$a = self::H0;
-		$b = self::H1;
-		$c = self::H2;
-		$d = self::H3;
-		$e = self::H4;
+		$this->v0 = self::H0;
+		$this->v1 = self::H1;
+		$this->v2 = self::H2;
+		$this->v3 = self::H3;
+		$this->v4 = self::H4;
 		$prepared = self::prepareMessage($this->message);
 		$chunks = str_split($prepared, 64);
 		foreach($chunks as $chunk) {
-			$w = $this->expand($chunk);
+			// initialize $a to $e for this round with hashes from last round.
+			$a = $this->v0;
+			$b = $this->v1;
+			$c = $this->v2;
+			$d = $this->v3;
+			$e = $this->v4;
+			// expand $chunk from 16 32bit words to 80.
+			$w = self::expand($chunk);
+
 			for($i=0;$i<80;$i++) {
 				$f = self::getSHA($i, $b, $c, $d);
 				$k = self::getK($i);

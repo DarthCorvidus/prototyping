@@ -37,6 +37,7 @@ class SHA1StringTest extends TestCase {
 		$this->assertEquals(64, strlen($expected));
 		$this->assertEquals($expected, $prepared);
 	}
+	
 	function testGetHashEmpty() {
 		$sha1 = new SHA1String("");
 		$expected = sha1("");
@@ -47,6 +48,26 @@ class SHA1StringTest extends TestCase {
 		$sha1 = new SHA1String('password');
 		$expected = sha1("password");
 		$this->assertEquals($expected, $sha1->getHash());
+	}
+	/**
+	 * Test lowest hash that 'overpads' to the next chunk, ie expands the
+	 * message by another 64 bytes just for padding.
+	 */
+	function testGetHash56() {
+			$message = random_bytes(56);
+			$sha1 = new SHA1String($message);
+			$this->assertEquals(sha1($message), $sha1->getHash());
+
+	}
+	/*
+	 * Test on strings from 1 to 1024 bytes
+	 */
+	function testGetHashStress() {
+		for($i=1;$i<=1024;$i++) {
+			$message = random_bytes($i);
+			$sha1 = new SHA1String($message);
+			$this->assertEquals(sha1($message), $sha1->getHash());
+		}
 	}
 }
 
