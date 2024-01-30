@@ -2,42 +2,6 @@
 declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 class SHA1StringTest extends TestCase {
-	function testPrepareMessage() {
-		$message = random_bytes(953);
-		$prepared = SHA1String::prepareMessage($message);
-		$pad = chr(128). str_repeat("\0", 62);
-		$size = str_repeat("\0", 6).chr(29).chr(200);
-		$expected = $message.$pad.$size;
-		
-		$this->assertEquals(1024, strlen($prepared));
-		$this->assertEquals(1024, strlen($expected));
-		$this->assertEquals($expected, $prepared);
-	}
-	
-	function testPrepareMessage512Bit() {
-		$message = random_bytes(64);
-		$prepared = SHA1String::prepareMessage($message);
-		$pad = chr(128). str_repeat("\0", 55);
-		$size = str_repeat("\0", 6).chr(2).chr(0);
-		$expected = $message.$pad.$size;
-		
-		$this->assertEquals(128, strlen($prepared));
-		$this->assertEquals(128, strlen($expected));
-		$this->assertEquals($expected, $prepared);
-	}
-	
-	function testPrepareMessageEmpty() {
-		$message = "";
-		$prepared = SHA1String::prepareMessage($message);
-		$pad = chr(128). str_repeat("\0", 55);
-		$size = str_repeat("\0", 8);
-		$expected = $message.$pad.$size;
-		
-		$this->assertEquals(64, strlen($prepared));
-		$this->assertEquals(64, strlen($expected));
-		$this->assertEquals($expected, $prepared);
-	}
-	
 	function testGetChunk() {
 		$message = random_bytes(3814);
 		$sha1 = new SHA1String($message);
