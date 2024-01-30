@@ -91,6 +91,7 @@ abstract class SHA1 implements Timeshared {
 	}
 	
 	abstract function getData(int $chunk): string;
+	
 	function getChunk(): string {
 		if($this->chCount<$this->chunks) {
 			$chunk = $this->getData($this->chCount);
@@ -118,6 +119,58 @@ abstract class SHA1 implements Timeshared {
 		return $chunk;
 		}
 	return "";
+	}
+
+	function start(): void {
+		$this->v0 = self::H0;
+		$this->v1 = self::H1;
+		$this->v2 = self::H2;
+		$this->v3 = self::H3;
+		$this->v4 = self::H4;
+	}
+	
+	function step(): bool {
+		$chunk = $this->getChunk();
+		if($chunk === "") {
+			return false;
+		}
+		// initialize $a to $e for this round with hashes from last round.
+		$a = $this->v0;
+		$b = $this->v1;
+		$c = $this->v2;
+		$d = $this->v3;
+		$e = $this->v4;
+		// expand $chunk from 16 32bit words to 80.
+		$w = self::expand($chunk);
+
+		for($i=0;$i<80;$i++) {
+			$f = self::getSHA($i, $b, $c, $d);
+			$k = self::getK($i);
+			$tmp = (self::rotateLeft($a, 5) + $f + $e + $k + $w[$i]) & 0xffffffff;
+			$e = $d;
+			$d = $c;
+			$c = self::rotateLeft($b, 30);
+			$b = $a;
+			$a = $tmp;
+		}
+		$this->v0 = ($this->v0 + $a) & 0xffffffff;
+		$this->v1 = ($this->v1 + $b) & 0xffffffff;
+		$this->v2 = ($this->v2 + $c) & 0xffffffff;
+		$this->v3 = ($this->v3 + $d) & 0xffffffff;
+		$this->v4 = ($this->v4 + $e) & 0xffffffff;
+	return true;
+	}
+
+	public function stop(): void {
+		;
+	}
+	
+	function getHash() {
+		$this->start();
+		while($this->step()) {
+
+		}
+	return sprintf('%08x%08x%08x%08x%08x', $this->v0, $this->v1, $this->v2, $this->v3, $this->v4);
 	}
 
 }
