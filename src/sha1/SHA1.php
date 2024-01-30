@@ -12,8 +12,16 @@ abstract class SHA1 implements Timeshared {
 	protected int $v4 = self::H4;
 	private int $chCount = 0;
 	protected int $chunks;
-	protected bool $overpad = false;
-	protected int $length;
+	private bool $overpad = false;
+	private int $length;
+	public function setSize(int $size) {
+		$this->length = $size;
+		$this->chunks = ($this->length>>6);
+		$mod = $this->length % 64;
+		if($mod >= 56) {
+			$this->overpad = true;
+		}
+	}
 	static function rotateLeft(int $rl, int $n): int {
 		// Shift the integer to the left:
 		$left = ($rl << $n);

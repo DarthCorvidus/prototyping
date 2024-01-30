@@ -3,12 +3,7 @@ class SHA1String extends SHA1 implements Timeshared {
 	private string $message;
 	function __construct(string $message) {
 		$this->message = $message;
-		$this->length = strlen($message);
-		$this->chunks = ($this->length>>6);
-		$mod = $this->length % 64;
-		if($mod >= 56) {
-			$this->overpad = true;
-		}
+		parent::setSize(strlen($message));
 	}
 	
 	static function prepareMessage(string $string): string {
