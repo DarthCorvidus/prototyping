@@ -10,6 +10,10 @@ abstract class SHA1 implements Timeshared {
 	protected int $v2 = self::H2;
 	protected int $v3 = self::H3;
 	protected int $v4 = self::H4;
+	private int $chCount = 0;
+	protected int $chunks;
+	protected bool $overpad = false;
+	protected int $length;
 	static function rotateLeft(int $rl, int $n): int {
 		// Shift the integer to the left:
 		$left = ($rl << $n);
@@ -85,4 +89,35 @@ abstract class SHA1 implements Timeshared {
 			return 0xCA62C1D6;
 		}
 	}
+	
+	abstract function getData(int $chunk): string;
+	function getChunk(): string {
+		if($this->chCount<$this->chunks) {
+			$chunk = $this->getData($this->chCount);
+			$this->chCount++;
+		return $chunk;
+		}
+		
+		if($this->chCount == $this->chunks && $this->overpad == false) {
+			$chunk = $chunk = $this->getData($this->chCount);
+			$chunk .= chr(128).str_repeat("\0", 64-strlen($chunk)-9). IntVal::uint64BE()->putValue($this->length*8);
+			$this->chCount++;
+		return $chunk;
+		}
+
+		if($this->chCount == $this->chunks && $this->overpad == true) {
+			$chunk = $chunk = $this->getData($this->chCount);
+			$chunk = str_pad($chunk.chr(128), 64, "\0", STR_PAD_RIGHT);
+			$this->chCount++;
+		return $chunk;
+		}
+		
+		if($this->chCount == $this->chunks+1 && $this->overpad == true) {
+			$chunk = str_repeat("\0", 56).IntVal::uint64BE()->putValue($this->length*8);
+			$this->chCount++;
+		return $chunk;
+		}
+	return "";
+	}
+
 }

@@ -1,10 +1,6 @@
 <?php
 class SHA1String extends SHA1 implements Timeshared {
 	private string $message;
-	private int $length;
-	private int $chunks;
-	private int $chCount = 0;
-	private bool $overpad = false;
 	function __construct(string $message) {
 		$this->message = $message;
 		$this->length = strlen($message);
@@ -28,34 +24,9 @@ class SHA1String extends SHA1 implements Timeshared {
 		$string .= \IntVal::uint64BE()->putValue($bitsize);
 	return $string;
 	}
-	
-	function getChunk(): string {
-		if($this->chCount<$this->chunks) {
-			$chunk = substr($this->message, $this->chCount*64, 64);
-			$this->chCount++;
-		return $chunk;
-		}
-		
-		if($this->chCount == $this->chunks && $this->overpad == false) {
-			$chunk = substr($this->message, $this->chCount*64, 64);
-			$chunk .= chr(128).str_repeat("\0", 64-strlen($chunk)-9). IntVal::uint64BE()->putValue($this->length*8);
-			$this->chCount++;
-		return $chunk;
-		}
 
-		if($this->chCount == $this->chunks && $this->overpad == true) {
-			$chunk = substr($this->message, $this->chCount*64, 64);
-			$chunk = str_pad($chunk.chr(128), 64, "\0", STR_PAD_RIGHT);
-			$this->chCount++;
-		return $chunk;
-		}
-		
-		if($this->chCount == $this->chunks+1 && $this->overpad == true) {
-			$chunk = str_repeat("\0", 56).IntVal::uint64BE()->putValue($this->length*8);
-			$this->chCount++;
-		return $chunk;
-		}
-	return "";
+	function getData(int $chunk): string {
+		return substr($this->message, $chunk*64, 64);
 	}
 	
 	function start(): void {
