@@ -1,5 +1,5 @@
 <?php
-class SHA1String extends SHA1 {
+class SHA1String extends SHA1 implements Timeshared {
 	private string $message;
 	private int $length;
 	private int $chunks;
@@ -58,37 +58,54 @@ class SHA1String extends SHA1 {
 	return "";
 	}
 	
-	function getHash() {
+	function start(): void {
 		$this->v0 = self::H0;
 		$this->v1 = self::H1;
 		$this->v2 = self::H2;
 		$this->v3 = self::H3;
 		$this->v4 = self::H4;
-		while($chunk = $this->getChunk()) {
-			// initialize $a to $e for this round with hashes from last round.
-			$a = $this->v0;
-			$b = $this->v1;
-			$c = $this->v2;
-			$d = $this->v3;
-			$e = $this->v4;
-			// expand $chunk from 16 32bit words to 80.
-			$w = self::expand($chunk);
+	}
+	
+	function step(): bool {
+		$chunk = $this->getChunk();
+		if($chunk === "") {
+			return false;
+		}
+		// initialize $a to $e for this round with hashes from last round.
+		$a = $this->v0;
+		$b = $this->v1;
+		$c = $this->v2;
+		$d = $this->v3;
+		$e = $this->v4;
+		// expand $chunk from 16 32bit words to 80.
+		$w = self::expand($chunk);
 
-			for($i=0;$i<80;$i++) {
-				$f = self::getSHA($i, $b, $c, $d);
-				$k = self::getK($i);
-				$tmp = (self::rotateLeft($a, 5) + $f + $e + $k + $w[$i]) & 0xffffffff;
-				$e = $d;
-				$d = $c;
-				$c = self::rotateLeft($b, 30);
-				$b = $a;
-				$a = $tmp;
-			}
-			$this->v0 = ($this->v0 + $a) & 0xffffffff;
-			$this->v1 = ($this->v1 + $b) & 0xffffffff;
-			$this->v2 = ($this->v2 + $c) & 0xffffffff;
-			$this->v3 = ($this->v3 + $d) & 0xffffffff;
-			$this->v4 = ($this->v4 + $e) & 0xffffffff;
+		for($i=0;$i<80;$i++) {
+			$f = self::getSHA($i, $b, $c, $d);
+			$k = self::getK($i);
+			$tmp = (self::rotateLeft($a, 5) + $f + $e + $k + $w[$i]) & 0xffffffff;
+			$e = $d;
+			$d = $c;
+			$c = self::rotateLeft($b, 30);
+			$b = $a;
+			$a = $tmp;
+		}
+		$this->v0 = ($this->v0 + $a) & 0xffffffff;
+		$this->v1 = ($this->v1 + $b) & 0xffffffff;
+		$this->v2 = ($this->v2 + $c) & 0xffffffff;
+		$this->v3 = ($this->v3 + $d) & 0xffffffff;
+		$this->v4 = ($this->v4 + $e) & 0xffffffff;
+	return true;
+	}
+	
+	function stop(): void {
+		
+	}
+	
+	function getHash() {
+		$this->start();
+		while($this->step()) {
+
 		}
 	return sprintf('%08x%08x%08x%08x%08x', $this->v0, $this->v1, $this->v2, $this->v3, $this->v4);
 	}
