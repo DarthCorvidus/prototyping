@@ -1,4 +1,6 @@
 <?php
 interface Timeshared {
-	function step(): bool;
+	function start(): void;
+	function loop(): bool;
+	function stop(): void;
 }
