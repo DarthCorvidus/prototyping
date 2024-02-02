@@ -3,8 +3,8 @@
 require __DIR__.'/../../vendor/autoload.php';
 
 $timeshare = new Timeshare();
-$input = new ReadInput();
-$timeshare->addTimeshared($input);
+$termio = new TermIO(new ReadInput($timeshare));
+$timeshare->addTimeshared($termio);
 while($timeshare->loop()) {
 	
 }

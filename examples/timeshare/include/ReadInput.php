@@ -1,24 +1,27 @@
 <?php
-class ReadInput implements Timeshared {
-	#private Timeshare $timeshare;
-	function __construct() {
+class ReadInput implements TermIOListener {
+	private Timeshare $timeshare;
+	function __construct(Timeshare $timeshare) {
 		stream_set_blocking(STDIN, false);
-		#$this->timeshare = $timeshare;
+		$this->timeshare = $timeshare;
 	}
 
-	private function handleCommand(string $command): void {
+	function onInput(TermIO $termio, string $command): void {
 		$explode = explode(" ", $command);
 		if(count($explode)==1) {
-			$this->handleOne($command);
+			$this->handleOne($termio, $command);
 		return;
 		}
 		if(count($explode) == 2) {
-			$this->handleTwo($explode);
+			$this->handleTwo($termio, $explode);
 		return;
 		}
 	}
 	
-	private function handleOne($command): void {
+	private function handleOne(TermIO $termio, $command): void {
+		if($command==="exit") {
+			exit();
+		}
 		if($command === "help") {
 			echo "du <dir>      disk usage".PHP_EOL;
 			echo "sha1 <dir>    create SHA1 sum for each file in <dir>".PHP_EOL;
@@ -27,7 +30,7 @@ class ReadInput implements Timeshared {
 		}
 	}
 	
-	private function handleTwo(array $command) {
+	private function handleTwo(Termio $termio, array $command) {
 		if($command[0]=="du") {
 			if(!is_dir($command[1])) {
 				echo "Path ".$command[1]." does not exist or is no directory".PHP_EOL;
@@ -52,30 +55,5 @@ class ReadInput implements Timeshared {
 			$rnd = new Randomizer((int)$command[1]);
 			Timeshare::addTimeshared($rnd);
 		}
-	}
-	
-	public function loop(): bool {
-		$input = fgets(STDIN);
-		if($input === false) {
-			return true;
-		}
-		$trimmed = trim($input);
-		if($trimmed === "") {
-			return true;
-		}
-		if($trimmed === "exit") {
-			Timeshare::stop();
-			return false;
-		}
-		$this->handleCommand($trimmed);
-	return true;
-	}
-
-	public function start(): void {
-		
-	}
-
-	public function stop(): void {
-		
 	}
 }
