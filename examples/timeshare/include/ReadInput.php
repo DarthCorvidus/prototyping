@@ -54,7 +54,7 @@ class ReadInput implements Timeshared {
 		}
 	}
 	
-	public function step(): bool {
+	public function loop(): bool {
 		$input = fgets(STDIN);
 		if($input === false) {
 			return true;
@@ -69,5 +69,13 @@ class ReadInput implements Timeshared {
 		}
 		$this->handleCommand($trimmed);
 	return true;
+	}
+
+	public function start(): void {
+		
+	}
+
+	public function stop(): void {
+		
 	}
 }
