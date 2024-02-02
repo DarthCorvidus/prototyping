@@ -23,10 +23,10 @@ class ReadInput implements TermIOListener {
 			exit();
 		}
 		if($command === "help") {
-			echo "du <dir>      disk usage".PHP_EOL;
-			echo "sha1 <dir>    create SHA1 sum for each file in <dir>".PHP_EOL;
-			echo "rnd <int>     creates <int> amount of strings and their SHA1 sum".PHP_EOL;
-			echo "exit          exit program".PHP_EOL;
+			$termio->addBuffer("du <dir>      disk usage");
+			$termio->addBuffer("sha1 <dir>    create SHA1 sum for each file in <dir>");
+			$termio->addBuffer("rnd <int>     creates <int> amount of strings and their SHA1 sum");
+			$termio->addBuffer("exit          exit program");
 		}
 	}
 	
