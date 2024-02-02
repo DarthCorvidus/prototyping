@@ -8,7 +8,7 @@ class Randomizer implements Timeshared{
 		$this->startTime = hrtime(true);
 	}
 
-	public function step(): bool {
+	public function loop(): bool {
 		if($this->count < $this->steps) {
 			$random = sha1(random_bytes(65535));
 			$this->count++;
@@ -17,5 +17,13 @@ class Randomizer implements Timeshared{
 	echo "Values: ".$this->steps.PHP_EOL;
 	echo "Time:   ".round((hrtime(true)-$this->startTime)/1000000000, 2).PHP_EOL;
 	return false;
+	}
+
+	public function start(): void {
+		
+	}
+
+	public function stop(): void {
+		
 	}
 }

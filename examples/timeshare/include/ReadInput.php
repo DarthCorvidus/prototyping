@@ -26,6 +26,7 @@ class ReadInput implements TermIOListener {
 			$termio->addBuffer("du <dir>      disk usage");
 			$termio->addBuffer("sha1 <dir>    create SHA1 sum for each file in <dir>");
 			$termio->addBuffer("rnd <int>     creates <int> amount of strings and their SHA1 sum");
+			$termio->addBuffer("t <int>       Run timer for <int> seconds");
 			$termio->addBuffer("exit          exit program");
 		}
 	}
@@ -53,7 +54,13 @@ class ReadInput implements TermIOListener {
 		
 		if($command[0] == "rnd") {
 			$rnd = new Randomizer((int)$command[1]);
-			Timeshare::addTimeshared($rnd);
+			$this->timeshare->addTimeshared($rnd);
 		}
+		
+		if($command[0] == "t") {
+			$timer = new \Examples\Timeshared\Timer((int)$command[1]);
+			$this->timeshare->addTimeshared($timer);
+		}
+
 	}
 }
