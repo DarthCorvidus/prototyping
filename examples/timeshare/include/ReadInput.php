@@ -1,7 +1,6 @@
 <?php
 class ReadInput implements TermIOListener {
 	private Timeshare $timeshare;
-	private TermIO $termio;
 	function __construct(Timeshare $timeshare) {
 		stream_set_blocking(STDIN, false);
 		$this->timeshare = $timeshare;
@@ -40,7 +39,7 @@ class ReadInput implements TermIOListener {
 			}
 			$dir = new DirectoryLinear($command[1]);
 			$dir->addDirectoryObserver(new DirectorySize());
-			Timeshare::addTimeshared($dir);
+			$this->timeshare->addTimeshared($dir);
 		}
 		
 		if($command[0] == "sha1") {

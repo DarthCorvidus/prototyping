@@ -37,7 +37,7 @@ class DirectoryLinear implements Timeshared {
 	}
 	
 	function run() {
-		while($this->step()) {
+		while($this->loop()) {
 			
 		}
 	}
@@ -85,10 +85,18 @@ class DirectoryLinear implements Timeshared {
 	return true;
 	}
 	
-	function step(): bool {
+	function loop(): bool {
 		if($this->stepEntry()) {
 			return true;
 		}
 	return $this->stepStack();
+	}
+	
+	function stop(): void {
+		
+	}
+	
+	function start(): void {
+		
 	}
 }
