@@ -4,16 +4,20 @@ class Timer implements \Timeshared {
 	private int $seconds;
 	private int $start = 0;
 	private int $stopped;
-	function __construct(int $seconds) {
+	private int $spent;
+	private TimerListener $listener;
+	function __construct(int $seconds, TimerListener $listener) {
 		$this->seconds = $seconds*10000;
 		$this->start = microtime(true)*10000;
+		$this->listener = $listener;
 	}
 	
 	public function loop(): bool {
 		$microtime = microtime(true)*10000;
 		if($microtime-$this->start>$this->seconds) {
 			$this->stopped = $microtime;
-			return false;
+			$this->spent = $this->stopped-$this->start;
+		return false;
 		}
 	return true;
 	}
@@ -22,7 +26,15 @@ class Timer implements \Timeshared {
 		
 	}
 
+	function getMicroseconds(): int {
+		return $this->seconds;
+	}
+	
+	function getSpent(): int {
+		return $this->spent;
+	}
+	
 	public function stop(): void {
-		echo "Timer with ".($this->seconds/10000)." seconds stopped after ".(($this->stopped-$this->start)/10000).PHP_EOL;
+		$this->listener->onEnd($this);
 	}
 }

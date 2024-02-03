@@ -1,6 +1,7 @@
 <?php
 class ReadInput implements TermIOListener {
 	private Timeshare $timeshare;
+	private TermIO $termio;
 	function __construct(Timeshare $timeshare) {
 		stream_set_blocking(STDIN, false);
 		$this->timeshare = $timeshare;
@@ -19,7 +20,7 @@ class ReadInput implements TermIOListener {
 	}
 	
 	private function handleOne(TermIO $termio, $command): void {
-		if($command==="exit") {
+		if($command==="exit" or $command === "x") {
 			exit();
 		}
 		if($command === "help") {
@@ -27,7 +28,7 @@ class ReadInput implements TermIOListener {
 			$termio->addBuffer("sha1 <dir>    create SHA1 sum for each file in <dir>");
 			$termio->addBuffer("rnd <int>     creates <int> amount of strings and their SHA1 sum");
 			$termio->addBuffer("t <int>       Run timer for <int> seconds");
-			$termio->addBuffer("exit          exit program");
+			$termio->addBuffer("exit or x     exit program");
 		}
 	}
 	
@@ -58,9 +59,8 @@ class ReadInput implements TermIOListener {
 		}
 		
 		if($command[0] == "t") {
-			$timer = new \Examples\Timeshared\Timer((int)$command[1]);
+			$timer = new \Examples\Timeshared\Timer((int)$command[1], new Examples\Timeshared\DisplayTimer($termio));
 			$this->timeshare->addTimeshared($timer);
 		}
-
 	}
 }
