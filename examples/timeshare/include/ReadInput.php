@@ -38,7 +38,7 @@ class ReadInput implements TermIOListener {
 			return;
 			}
 			$dir = new DirectoryLinear($command[1]);
-			$dir->addDirectoryObserver(new DirectorySize());
+			$dir->addDirectoryObserver(new DirectorySize($termio));
 			$this->timeshare->addTimeshared($dir);
 		}
 		

@@ -4,6 +4,11 @@ class DirectorySize implements DirectoryObserver {
 	private int $dirCount = 0;
 	private int $fileCount = 0;
 	private int $startTime;
+	private TermIO $termio;
+	function __construct(TermIO $termio) {
+		$this->termio = $termio;
+	}
+	
 	public function onDirectory(\SplFileInfo $directory): void {
 		$this->dirCount++;
 		$this->size += $directory->getSize();
@@ -15,7 +20,7 @@ class DirectorySize implements DirectoryObserver {
 	}
 	
 	public function onError(\RuntimeException $e): void {
-		echo $e->getMessage().PHP_EOL;
+		$this->termio->addBuffer($e->getMessage());
 	}
 
 	public function onLink(\SplFileInfo $link): void {
@@ -35,10 +40,10 @@ class DirectorySize implements DirectoryObserver {
 	}
 
 	public function onEnd(): void {
-		echo "Directories: ".$this->dirCount.PHP_EOL;
-		echo "Files:       ".$this->fileCount.PHP_EOL;
-		echo "Size:        ".$this->size.PHP_EOL;
-		echo "Time spent:  ".round((hrtime(true)-$this->startTime)/1000000000, 2).PHP_EOL;
+		$this->termio->addBuffer("Directories: ".$this->dirCount);
+		$this->termio->addBuffer("Files:       ".$this->fileCount);
+		$this->termio->addBuffer("Size:        ".$this->size);
+		$this->termio->addBuffer("Time spent:  ".round((hrtime(true)-$this->startTime)/1000000000, 2));
 	}
 
 	public function onStart(): void {
