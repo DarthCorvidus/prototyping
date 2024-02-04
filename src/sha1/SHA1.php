@@ -14,6 +14,7 @@ abstract class SHA1 implements Timeshared {
 	protected int $chunks;
 	private bool $overpad = false;
 	private int $length;
+	protected string $result;
 	public function setSize(int $size) {
 		$this->length = $size;
 		$this->chunks = ($this->length>>6);
@@ -140,6 +141,7 @@ abstract class SHA1 implements Timeshared {
 	function loop(): bool {
 		$chunk = $this->getChunk();
 		if($chunk === "") {
+			$this->result = sprintf('%08x%08x%08x%08x%08x', $this->v0, $this->v1, $this->v2, $this->v3, $this->v4);
 			return false;
 		}
 		// initialize $a to $e for this round with hashes from last round.

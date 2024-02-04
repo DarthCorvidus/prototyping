@@ -1,7 +1,12 @@
 <?php
 declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
-class SHA1StringTest extends TestCase {
+class SHA1StringTest extends TestCase implements HashStringObserver {
+	private $message = "Humpty dumpty jumps over the wall";
+	private string $observerResult = "";
+	function onHashed(\SHA1String $sha1, string $hash) {
+		$this->observerResult = $hash;
+	}
 	function testGetChunk() {
 		$message = random_bytes(3814);
 		$sha1 = new SHA1String($message);
@@ -101,6 +106,16 @@ class SHA1StringTest extends TestCase {
 			$sha1 = new SHA1String($message);
 			$this->assertEquals(sha1($message), $sha1->getHash());
 		}
+	}
+	
+	function testHashObserver() {
+		$sha1 = new SHA1String($this->message);
+		$sha1->setHashObserver($this);
+		while($sha1->loop()) {
+			
+		}
+		$sha1->stop();
+		$this->assertEquals(sha1($this->message), $this->observerResult);
 	}
 }
 
