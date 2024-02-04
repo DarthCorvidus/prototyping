@@ -1,4 +1,4 @@
 <?php
 interface HashFileObserver {
-	function onHashed(string $path, $hash);
+	function onHashed(SHA1File $sha1, string $hash): void;
 }
