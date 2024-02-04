@@ -137,7 +137,7 @@ abstract class SHA1 implements Timeshared {
 		$this->v4 = self::H4;
 	}
 	
-	function step(): bool {
+	function loop(): bool {
 		$chunk = $this->getChunk();
 		if($chunk === "") {
 			return false;
@@ -175,7 +175,7 @@ abstract class SHA1 implements Timeshared {
 	
 	function getHash() {
 		$this->start();
-		while($this->step()) {
+		while($this->loop()) {
 
 		}
 	return sprintf('%08x%08x%08x%08x%08x', $this->v0, $this->v1, $this->v2, $this->v3, $this->v4);
