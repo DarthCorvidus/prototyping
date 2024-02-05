@@ -5,6 +5,8 @@ class DirectoryLinear implements Timeshared {
 	private int $count = 0;
 	private ?DirectoryObserver $do = null;
 	private ?DirectoryIterator $current = null;
+	private ?FileHandlerFactory $fileHandler = null;
+	private ?Timeshared $currentFileHandler = null;
 	private bool $started = false;
 	function __construct(string $path) {
 		$this->path = $path;
@@ -13,6 +15,10 @@ class DirectoryLinear implements Timeshared {
 	
 	function addDirectoryObserver(DirectoryObserver $observer) {
 		$this->do = $observer;
+	}
+	
+	function setDirectoryFileHandler(FileHandlerFactory $fileHandler) {
+		$this->fileHandler = $fileHandler;
 	}
 
 	private function handleEntry(SplFileInfo $entry) {
@@ -78,6 +84,11 @@ class DirectoryLinear implements Timeshared {
 		if($this->do !== null) {
 			$this->handleEntry($current);
 		}
+		#echo $current->getRealPath().PHP_EOL;
+		if($this->fileHandler !== null && $current->isFile() && !$current->isDir() && !$current->isLink() && !$current->isDot()) {
+			echo "Delegating to ". get_class($this->fileHandler)." for ".$current->getRealPath().PHP_EOL;
+			$this->currentFileHandler = $this->fileHandler->onFile($current);
+		}
 		if(!$current->isLink() && $current->isDir() && !$current->isDot()) {
 			$this->stack[] = $current->getRealPath();
 		}
@@ -86,17 +97,40 @@ class DirectoryLinear implements Timeshared {
 	}
 	
 	function loop(): bool {
+		if($this->currentFileHandler !== null) {
+			if(!$this->currentFileHandler->loop()) {
+				$this->currentFileHandler->finish();
+				$this->currentFileHandler = null;
+			}
+		return true;
+		}
 		if($this->stepEntry()) {
 			return true;
 		}
 	return $this->stepStack();
 	}
 	
-	function stop(): void {
+	function start(): void {
 		
 	}
-	
-	function start(): void {
+
+	public function finish(): void {
+		
+	}
+
+	public function kill(): void {
+		
+	}
+
+	public function pause(): void {
+		
+	}
+
+	public function resume(): void {
+		
+	}
+
+	public function terminate(): void {
 		
 	}
 }
