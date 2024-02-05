@@ -7,6 +7,10 @@ class Timeshare implements Timeshared {
 		;
 	}
 	
+	function getProcessCount() {
+		return $this->count;
+	}
+	
 	function addTimeshared(Timeshared $timeshared) {
 		$this->timeshared[] = $timeshared;
 		$this->count = count($this->timeshared);
