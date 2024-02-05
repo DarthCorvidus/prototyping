@@ -31,7 +31,23 @@ class TermIO implements Timeshared {
 		
 	}
 
-	public function stop(): void {
+	public function finish(): void {
+		
+	}
+
+	public function kill(): void {
+		
+	}
+
+	public function pause(): void {
+		
+	}
+
+	public function resume(): void {
+		
+	}
+
+	public function terminate(): void {
 		
 	}
 }
