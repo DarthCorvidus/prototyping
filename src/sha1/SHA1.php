@@ -24,6 +24,7 @@ abstract class SHA1 implements Timeshared {
 		}
 	}
 	static function rotateLeft(int $rl, int $n): int {
+		#plibv4\profiler\Profiler::startTimer("rotate");
 		// Shift the integer to the left:
 		$left = ($rl << $n);
 		/*
@@ -52,6 +53,7 @@ abstract class SHA1 implements Timeshared {
 		 * being dropped.
 		 */
 		$rid = $union & 0xFFFFFFFF;
+		#plibv4\profiler\Profiler::endTimer("rotate");
 	return $rid;
 	}
 	/**
@@ -61,7 +63,9 @@ abstract class SHA1 implements Timeshared {
 		$split = str_split($string, 4);
 		$w = [];
 		foreach ($split as $value) {
+			#plibv4\profiler\Profiler::startTimer("toint");
 			$w[] = IntVal::uint32BE()->getValue($value);
+			#plibv4\profiler\Profiler::endTimer("toint");
 		}
 		for($i=16;$i<80;$i++) {
 			$w[] = self::rotateLeft($w[$i-3] ^ $w[$i-8] ^ $w[$i-14] ^ $w[$i-16], 1);
@@ -139,7 +143,9 @@ abstract class SHA1 implements Timeshared {
 	}
 	
 	function loop(): bool {
+		#plibv4\profiler\Profiler::startTimer("getData");
 		$chunk = $this->getChunk();
+		#plibv4\profiler\Profiler::endTimer("getData");
 		if($chunk === "") {
 			$this->result = sprintf('%08x%08x%08x%08x%08x', $this->v0, $this->v1, $this->v2, $this->v3, $this->v4);
 			return false;
@@ -151,9 +157,13 @@ abstract class SHA1 implements Timeshared {
 		$d = $this->v3;
 		$e = $this->v4;
 		// expand $chunk from 16 32bit words to 80.
+		#plibv4\profiler\Profiler::startTimer("expand");
 		$w = self::expand($chunk);
+		#plibv4\profiler\Profiler::endTimer("expand");
 
+		#plibv4\profiler\Profiler::startTimer("sha1");
 		for($i=0;$i<80;$i++) {
+			#plibv4\profiler\Profiler::startTimer("getsha");
 			$f = self::getSHA($i, $b, $c, $d);
 			$k = self::getK($i);
 			$tmp = (self::rotateLeft($a, 5) + $f + $e + $k + $w[$i]) & 0xffffffff;
@@ -163,6 +173,7 @@ abstract class SHA1 implements Timeshared {
 			$b = $a;
 			$a = $tmp;
 		}
+		#plibv4\profiler\Profiler::endTimer("sha1");
 		$this->v0 = ($this->v0 + $a) & 0xffffffff;
 		$this->v1 = ($this->v1 + $b) & 0xffffffff;
 		$this->v2 = ($this->v2 + $c) & 0xffffffff;
@@ -171,10 +182,6 @@ abstract class SHA1 implements Timeshared {
 	return true;
 	}
 
-	public function stop(): void {
-		;
-	}
-	
 	function getHash() {
 		$this->start();
 		while($this->loop()) {
@@ -183,4 +190,15 @@ abstract class SHA1 implements Timeshared {
 	return sprintf('%08x%08x%08x%08x%08x', $this->v0, $this->v1, $this->v2, $this->v3, $this->v4);
 	}
 
+	function pause(): void {
+	}
+	
+	function resume(): void {
+	}
+	
+	function terminate(): void {
+	}
+	
+	function kill(): void {
+	}
 }

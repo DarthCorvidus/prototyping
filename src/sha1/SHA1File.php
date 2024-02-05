@@ -15,11 +15,7 @@ class SHA1File extends SHA1 {
 		return $this->file->fread(64);
 	}
 
-	public function start(): void {
-		
-	}
-
-	public function stop(): void {
+	public function finish(): void {
 		if($this->hashObserver!=null) {
 			$this->hashObserver->onHashed($this, $this->result);
 		}

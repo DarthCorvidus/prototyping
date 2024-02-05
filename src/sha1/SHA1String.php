@@ -11,7 +11,7 @@ class SHA1String extends SHA1 implements Timeshared {
 		$this->hashObserver = $hashObserver;
 	}
 	
-	public function stop(): void {
+	public function finish(): void {
 		if($this->hashObserver!=null) {
 			$this->hashObserver->onHashed($this, $this->result);
 		}

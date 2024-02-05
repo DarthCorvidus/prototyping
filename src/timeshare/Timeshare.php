@@ -12,9 +12,9 @@ class Timeshare implements Timeshared {
 		$this->count = count($this->timeshared);
 	}
 	
-	function stop(): void {
+	function finish(): void {
 		foreach($this->timeshared as $value) {
-			$this->timeshared->stop();
+			$value->finish();
 		}
 		$this->timeshared = array();
 	}
@@ -29,7 +29,7 @@ class Timeshare implements Timeshared {
 		foreach($this->timeshared as $key => $value) {
 			if($value==$timeshared) {
 				$this->pointer = -1;
-				$value->stop();
+				$value->finish();
 				continue;
 			}
 			$new[] = $value;
@@ -58,5 +58,24 @@ class Timeshare implements Timeshared {
 			$this->pointer = 0;
 		}
 	return true;
+	}
+
+	public function kill(): void {
+		foreach($this->timeshared as $value) {
+			$value->kill();
+		}
+		$this->timeshared = array();
+	}
+
+	public function pause(): void {
+		
+	}
+
+	public function resume(): void {
+		
+	}
+
+	public function terminate(): void {
+		
 	}
 }
