@@ -17,7 +17,7 @@ class DirectoryLinear implements Timeshared {
 		$this->do = $observer;
 	}
 	
-	function setDirectoryFileHandler(FileHandlerFactory $fileHandler) {
+	function setFileHandlerFactory(FileHandlerFactory $fileHandler) {
 		$this->fileHandler = $fileHandler;
 	}
 

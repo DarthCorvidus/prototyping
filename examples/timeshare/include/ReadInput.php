@@ -1,12 +1,14 @@
 <?php
-class ReadInput implements TermIOListener {
+class ReadInput implements TermIOListener, FileHandlerFactory {
 	private Timeshare $timeshare;
+	private TermIO $termio;
 	function __construct(Timeshare $timeshare) {
 		stream_set_blocking(STDIN, false);
 		$this->timeshare = $timeshare;
 	}
 
 	function onInput(TermIO $termio, string $command): void {
+		$this->termio = $termio;
 		$explode = explode(" ", $command);
 		if(count($explode)==1) {
 			$this->handleOne($termio, $command);
@@ -48,8 +50,9 @@ class ReadInput implements TermIOListener {
 			return;
 			}
 			$dir = new DirectoryLinear($command[1]);
-			$dir->addDirectoryObserver(new DirectorySHA());
-			Timeshare::addTimeshared($dir);
+			$dir->setDirectoryFileHandler($this);
+			#$dir->addDirectoryObserver(new DirectorySHA());
+			$this->timeshare->addTimeshared($dir);
 		}
 		
 		if($command[0] == "rnd") {
@@ -61,5 +64,9 @@ class ReadInput implements TermIOListener {
 			$timer = new \Examples\Timeshared\Timer((int)$command[1], new Examples\Timeshared\DisplayTimer($termio));
 			$this->timeshare->addTimeshared($timer);
 		}
+	}
+
+	public function onFile(\SplFileInfo $info): \Timeshared {
+		return new \Examples\Timeshared\ChecksumFile($info, $this->termio);
 	}
 }
