@@ -3,14 +3,14 @@ class Randomizer implements Timeshared{
 	private int $steps;
 	private int $count = 0;
 	private int $startTime;
-	function __construct($steps) {
+	function __construct($stgit steps) {
 		$this->steps = $steps;
 		$this->startTime = hrtime(true);
 	}
 
 	public function loop(): bool {
 		if($this->count < $this->steps) {
-			$random = sha1(random_bytes(65535));
+			sha1(random_bytes(65535));
 			$this->count++;
 		return true;
 		}
@@ -19,11 +19,31 @@ class Randomizer implements Timeshared{
 	return false;
 	}
 
+	public function stop(): void {
+		
+	}
+
+	public function finish(): void {
+		
+	}
+
+	public function kill(): void {
+		
+	}
+
+	public function pause(): void {
+		
+	}
+
+	public function resume(): void {
+		
+	}
+
 	public function start(): void {
 		
 	}
 
-	public function stop(): void {
+	public function terminate(): void {
 		
 	}
 }
