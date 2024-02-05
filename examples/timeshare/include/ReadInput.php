@@ -50,7 +50,7 @@ class ReadInput implements TermIOListener, FileHandlerFactory {
 			return;
 			}
 			$dir = new DirectoryLinear($command[1]);
-			$dir->setDirectoryFileHandler($this);
+			$dir->setFileHandlerFactory($this);
 			#$dir->addDirectoryObserver(new DirectorySHA());
 			$this->timeshare->addTimeshared($dir);
 		}
