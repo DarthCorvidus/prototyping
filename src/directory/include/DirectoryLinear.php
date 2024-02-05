@@ -8,9 +8,11 @@ class DirectoryLinear implements Timeshared {
 	private ?FileHandlerFactory $fileHandler = null;
 	private ?Timeshared $currentFileHandler = null;
 	private bool $started = false;
+	private Timeshare $timeshare;
 	function __construct(string $path) {
 		$this->path = $path;
 		$this->stack[] = $path;
+		$this->timeshare = new Timeshare();
 	}
 	
 	function addDirectoryObserver(DirectoryObserver $observer) {
@@ -86,8 +88,9 @@ class DirectoryLinear implements Timeshared {
 		}
 		#echo $current->getRealPath().PHP_EOL;
 		if($this->fileHandler !== null && $current->isFile() && !$current->isDir() && !$current->isLink() && !$current->isDot()) {
-			echo "Delegating to ". get_class($this->fileHandler)." for ".$current->getRealPath().PHP_EOL;
-			$this->currentFileHandler = $this->fileHandler->onFile($current);
+			echo "Delegating to ". get_class($this->fileHandler)." for ".$current->getRealPath()." (".number_format($current->getSize()).")".PHP_EOL;
+			$this->timeshare->addTimeshared($this->fileHandler->onFile($current));
+			#$this->currentFileHandler = $this->fileHandler->onFile($current);
 		}
 		if(!$current->isLink() && $current->isDir() && !$current->isDot()) {
 			$this->stack[] = $current->getRealPath();
@@ -97,13 +100,21 @@ class DirectoryLinear implements Timeshared {
 	}
 	
 	function loop(): bool {
-		if($this->currentFileHandler !== null) {
-			if(!$this->currentFileHandler->loop()) {
-				$this->currentFileHandler->finish();
-				$this->currentFileHandler = null;
-			}
+		#if($this->currentFileHandler !== null) {
+		#	if(!$this->currentFileHandler->loop()) {
+		#		$this->currentFileHandler->finish();
+		#		$this->currentFileHandler = null;
+		#	}
+		#return true;
+		#}
+		if($this->timeshare->getProcessCount()==5) {
+			$this->timeshare->loop();
 		return true;
 		}
+		if($this->timeshare->getProcessCount()<5) {
+			$this->timeshare->loop();
+		}
+		
 		if($this->stepEntry()) {
 			return true;
 		}
