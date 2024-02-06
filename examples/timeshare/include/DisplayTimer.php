@@ -7,7 +7,6 @@ class DisplayTimer implements TimerListener {
 	}
 	
 	public function onEnd(\Examples\Timeshared\Timer $timer) {
-		echo "x".PHP_EOL;
-		$this->termio->addBuffer("Timer with ".($timer->getMicroseconds()/10000)." seconds stopped after ".(($timer->getSpent())/10000));
+		$this->termio->addBuffer("Timer with ".($timer->getMicroseconds()/10000)." seconds stopped after ".(($timer->getSpent())/10000)." seconds");
 	}
 }

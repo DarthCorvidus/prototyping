@@ -3,7 +3,7 @@ class Randomizer implements Timeshared{
 	private int $steps;
 	private int $count = 0;
 	private int $startTime;
-	function __construct($stgit steps) {
+	function __construct($steps) {
 		$this->steps = $steps;
 		$this->startTime = hrtime(true);
 	}

@@ -34,7 +34,23 @@ class Timer implements \Timeshared {
 		return $this->spent;
 	}
 	
-	public function stop(): void {
+	public function finish(): void {
 		$this->listener->onEnd($this);
+	}
+
+	public function kill(): void {
+		
+	}
+
+	public function pause(): void {
+		
+	}
+
+	public function resume(): void {
+		
+	}
+
+	public function terminate(): void {
+		
 	}
 }
