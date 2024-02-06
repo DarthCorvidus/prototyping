@@ -1,6 +1,6 @@
 <?php
 class SHA1File extends SHA1 {
-	private SplFileObject $file;
+	private ?SplFileObject $file;
 	private ?HashFileObserver $hashObserver = null;
 	public function __construct(\SplFileObject $file) {
 		$this->file = $file;
@@ -16,6 +16,7 @@ class SHA1File extends SHA1 {
 	}
 
 	public function finish(): void {
+		$this->file = null;
 		if($this->hashObserver!=null) {
 			$this->hashObserver->onHashed($this, $this->result);
 		}
