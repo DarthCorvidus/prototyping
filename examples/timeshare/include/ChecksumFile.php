@@ -7,6 +7,8 @@ class ChecksumFile implements \Timeshared, \HashFileObserver {
 	function __construct(\SplFileInfo $file, \TermIO $termio) {
 		$this->path = $file->getRealPath();
 		$this->sha = new \SHA1File(new \SplFileObject($this->path));
+		$this->sha->setHashObserver($this);
+		$this->termio = $termio;
 	}
 	public function loop(): bool {
 		return $this->sha->loop();
