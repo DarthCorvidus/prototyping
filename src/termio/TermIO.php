@@ -1,9 +1,13 @@
 <?php
 class TermIO implements Timeshared {
 	private TermIOListener $listener;
-	private $outputBuffer = array();
+	private array $outputBuffer = array();
+	private bool $terminated = false;
+	private mixed $stdin;
 	public function __construct(TermIOListener $listener) {
 		$this->listener = $listener;
+		$this->stdin = STDIN;
+		stream_set_blocking($this->stdin, false);
 	}
 	
 	public function addBuffer(string $output) {
@@ -11,11 +15,15 @@ class TermIO implements Timeshared {
 	}
 	
 	public function loop(): bool {
-		if(!empty($this->outputBuffer)) {
+		$empty = empty($this->outputBuffer);
+		if($empty && $this->terminated) {
+			return false;
+		}
+		if(!$empty) {
 			fwrite(STDOUT, array_shift($this->outputBuffer).PHP_EOL);
 		return true;
 		}
-		$input = fgets(STDIN);
+		$input = fgets($this->stdin);
 		if($input === false) {
 			return true;
 		}
@@ -48,6 +56,6 @@ class TermIO implements Timeshared {
 	}
 
 	public function terminate(): void {
-		
+		$this->terminated = true;
 	}
 }
