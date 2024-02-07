@@ -22,6 +22,9 @@ class ConnectionProcess implements \Timeshared {
 	}
 
 	private function read() {
+		if($this->quit) {
+			return true;
+		}
 		$input = fgets($this->conn);
 		if($input === false) {
 			return true;
@@ -41,6 +44,7 @@ class ConnectionProcess implements \Timeshared {
 	private function write() {
 		fwrite($this->conn, array_shift($this->output).PHP_EOL);
 		if($this->quit === true && empty($this->output)) {
+			fclose($this->conn);
 			return false;
 		}
 	return true;
