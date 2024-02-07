@@ -4,6 +4,8 @@ class ConnectionProcess implements \Timeshared {
 	private mixed $conn;
 	private int $id;
 	private $output = [];
+	private bool $quit = false;
+	private int $requests = 0;
 	function __construct(mixed $conn, int $connectionId) {
 		$this->conn = $conn;
 		stream_set_blocking($this->conn, false);
@@ -19,22 +21,42 @@ class ConnectionProcess implements \Timeshared {
 		
 	}
 
+	private function read() {
+		$input = fgets($this->conn);
+		if($input === false) {
+			return true;
+		}
+		if(trim($input)==="quit") {
+			$this->output[] = "Received quit at ".date("Y-m-d H:i:s");
+			$this->output[] = "You wrote ".$this->requests." requests.";
+			$this->output[] = "Good bye!";
+			$this->quit = true;
+		return true;
+		}
+		$this->output[] = "You wrote at ".date("Y-m-d H:i:s").": ".trim($input);
+		$this->requests++;
+	return true;
+	}
+	
+	private function write() {
+		fwrite($this->conn, array_shift($this->output).PHP_EOL);
+		if($this->quit === true && empty($this->output)) {
+			return false;
+		}
+	return true;
+	}
+	
 	public function loop(): bool {
 		if($this->conn === false) {
 			return false;
 		}
 		if(!empty($this->output)) {
-			fwrite($this->conn, array_shift($this->output).PHP_EOL);
-		return true;
+			return $this->write();
 		}
-		$input = fgets($this->conn);
-		if($input === false) {
-			return true;
-		}
-		$this->output[] = "You wrote at ".date("Y-m-d H:i:s").": ".trim($input);
+		$this->read();
 	return true;
 	}
-
+	
 	public function pause(): void {
 		
 	}
