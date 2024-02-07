@@ -80,6 +80,8 @@ class Timeshare implements Timeshared {
 	}
 
 	public function terminate(): void {
-		
+		foreach($this->timeshared as $value) {
+			$value->terminate();
+		}
 	}
 }

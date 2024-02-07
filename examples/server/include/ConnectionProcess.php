@@ -74,6 +74,7 @@ class ConnectionProcess implements \Timeshared {
 	}
 
 	public function terminate(): void {
-		
+		$this->output[] = "Disconnect due to server shutdown.";
+		$this->quit = true;
 	}
 }
