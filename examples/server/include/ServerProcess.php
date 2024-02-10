@@ -28,8 +28,8 @@ class ServerProcess implements \Timeshared {
 		}
 		echo "Client accepted.".PHP_EOL;
 		$client = stream_socket_accept($this->server);
-		$connProc = new ConnectionProcess($client, $this->clientId);
-		$this->timeshare->addTimeshared($connProc);
+		$clientStream = new Stream($client, new \Examples\Server\Mode\Main());
+		$this->timeshare->addTimeshared($clientStream);
 		$this->clientId++;
 	return true;
 	}
