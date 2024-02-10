@@ -3,7 +3,7 @@ namespace Examples\Server;
 class Stream implements \Timeshared {
 	private mixed $conn;
 	private StreamListener $listener;
-	private bool $quit = false;
+	private bool $active = true;
 	function __construct(mixed $conn, StreamListener $listener) {
 		$this->conn = $conn;
 		stream_set_blocking($this->conn, false);
@@ -19,7 +19,7 @@ class Stream implements \Timeshared {
 	}
 
 	private function read() {
-		if($this->quit) {
+		if(!$this->active) {
 			return true;
 		}
 		$input = fgets($this->conn);
@@ -53,10 +53,9 @@ class Stream implements \Timeshared {
 		if($hasData) {
 			return $this->write();
 		}
-		#if(!$hasData && ) {
-			#fclose($this->conn);
-		#return false;
-		#}
+		if(!$hasData && $this->active == false) {
+		return false;
+		}
 		$this->read();
 	return true;
 	}
@@ -74,7 +73,7 @@ class Stream implements \Timeshared {
 	}
 
 	public function terminate(): void {
-		$this->output[] = "Disconnect due to server shutdown.";
-		$this->quit = true;
+		$this->listener->onDisconnect();
+		$this->active = false;
 	}
 }

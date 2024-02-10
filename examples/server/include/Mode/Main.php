@@ -47,6 +47,6 @@ class Main implements \Examples\Server\StreamListener {
 	}
 
 	public function onDisconnect() {
-		
+		$this->buffer[] = "Server side shutdown.";
 	}
 }
