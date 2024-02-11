@@ -4,6 +4,9 @@ class Main implements \Examples\Server\StreamListener {
 	private bool $active = true;
 	private array $buffer = array();
 	private int $requests = 0;
+	function __construct() {
+		$this->buffer[] = "Welcome to experimental server 0.1, use 'help' for help.";
+	}
 	public function getData(): string {
 		return array_shift($this->buffer);
 	}
@@ -35,6 +38,7 @@ class Main implements \Examples\Server\StreamListener {
 			$this->buffer[] = "Received quit at ".date("Y-m-d H:i:s");
 			$this->buffer[] = "You wrote ".$this->requests." requests.";
 			$this->buffer[] = "Good bye!";
+			$this->buffer[] = "quit";
 			$this->active = false;
 		return;
 		}
@@ -48,5 +52,6 @@ class Main implements \Examples\Server\StreamListener {
 
 	public function onDisconnect() {
 		$this->buffer[] = "Server side shutdown.";
+		$this->buffer[] = "quit";
 	}
 }
