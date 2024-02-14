@@ -265,13 +265,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/DarthCorvidus/plibv4-process",
-                "reference": "e9e2f1c98319385b83337ba03f6eb88039a37079"
+                "reference": "29a19c099ddbbf0e26e3787fe496283632972db1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-process/zipball/e9e2f1c98319385b83337ba03f6eb88039a37079",
-                "reference": "e9e2f1c98319385b83337ba03f6eb88039a37079",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-process/zipball/29a19c099ddbbf0e26e3787fe496283632972db1",
+                "reference": "29a19c099ddbbf0e26e3787fe496283632972db1",
                 "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7"
             },
             "default-branch": true,
             "type": "library",
@@ -280,7 +283,15 @@
                     "src/"
                 ]
             },
-            "time": "2023-07-16T09:41:32+00:00"
+            "scripts": {
+                "test": [
+                    "./vendor/bin/phpunit --bootstrap tests/autoload.php tests"
+                ],
+                "testdox": [
+                    "./vendor/bin/phpunit --bootstrap tests/autoload.php --testdox --colors=always tests"
+                ]
+            },
+            "time": "2024-02-14T18:21:35+00:00"
         },
         {
             "name": "plibv4/profiler",
@@ -533,12 +544,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/myclabs/DeepCopy.git",
-                "reference": "202aaf6b7c2e1e0a622b0298e9f3f537e4d84018"
+                "reference": "2f5294676c802a62b0549f6bc8983f14294ce369"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/202aaf6b7c2e1e0a622b0298e9f3f537e4d84018",
-                "reference": "202aaf6b7c2e1e0a622b0298e9f3f537e4d84018",
+                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/2f5294676c802a62b0549f6bc8983f14294ce369",
+                "reference": "2f5294676c802a62b0549f6bc8983f14294ce369",
                 "shasum": ""
             },
             "require": {
@@ -586,7 +597,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-11-01T08:01:43+00:00"
+            "time": "2024-02-10T11:10:03+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -594,12 +605,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "1eeeb2d5252d6d8706c5a8d9d88b8d1e7ecf2109"
+                "reference": "ce019e9ad711e31ee87c2c4c72e538b5240970c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/1eeeb2d5252d6d8706c5a8d9d88b8d1e7ecf2109",
-                "reference": "1eeeb2d5252d6d8706c5a8d9d88b8d1e7ecf2109",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/ce019e9ad711e31ee87c2c4c72e538b5240970c3",
+                "reference": "ce019e9ad711e31ee87c2c4c72e538b5240970c3",
                 "shasum": ""
             },
             "require": {
@@ -645,7 +656,7 @@
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
                 "source": "https://github.com/nikic/PHP-Parser/tree/master"
             },
-            "time": "2023-12-22T18:57:32+00:00"
+            "time": "2024-01-14T09:02:54+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -1091,12 +1102,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "d83362787fe210a371eeee448fb289a63bbe5560"
+                "reference": "b59fa6534869a57ccfe0142d08aef3db59cd2680"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d83362787fe210a371eeee448fb289a63bbe5560",
-                "reference": "d83362787fe210a371eeee448fb289a63bbe5560",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/b59fa6534869a57ccfe0142d08aef3db59cd2680",
+                "reference": "b59fa6534869a57ccfe0142d08aef3db59cd2680",
                 "shasum": ""
             },
             "require": {
@@ -1186,7 +1197,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-31T07:39:08+00:00"
+            "time": "2024-02-14T07:00:59+00:00"
         },
         {
             "name": "sebastian/cli-parser",

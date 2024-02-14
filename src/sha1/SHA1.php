@@ -1,5 +1,5 @@
 <?php
-abstract class SHA1 implements Timeshared {
+abstract class SHA1 implements \plibv4\process\Timeshared {
 	const H0 = 0x67452301;
 	const H1 = 0xEFCDAB89;
 	const H2 = 0x98BADCFE;
@@ -196,7 +196,8 @@ abstract class SHA1 implements Timeshared {
 	function resume(): void {
 	}
 	
-	function terminate(): void {
+	function terminate(): bool {
+		return true;
 	}
 	
 	function kill(): void {

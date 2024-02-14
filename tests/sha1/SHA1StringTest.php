@@ -111,7 +111,7 @@ class SHA1StringTest extends TestCase implements HashStringObserver {
 	function testHashObserver() {
 		$sha1 = new SHA1String($this->message);
 		$sha1->setHashObserver($this);
-		$timeshare = new Timeshare();
+		$timeshare = new \plibv4\process\Timeshare();
 		$timeshare->addTimeshared($sha1);
 		while($timeshare->loop()) {
 			

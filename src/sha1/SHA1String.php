@@ -1,5 +1,5 @@
 <?php
-class SHA1String extends SHA1 implements Timeshared {
+class SHA1String extends SHA1 {
 	private string $message;
 	private ?HashStringObserver $hashObserver = null;
 	function __construct(string $message) {

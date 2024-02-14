@@ -31,7 +31,7 @@ class SHA1FileTest extends TestCase implements HashFileObserver {
 		$expected = sha1_file(__DIR__."/test.bin");
 		$sha1 = new SHA1File(new SplFileObject(__DIR__."/test.bin"));
 		$sha1->setHashObserver($this);
-		$timeshare = new Timeshare();
+		$timeshare = new \plibv4\process\Timeshare();
 		$timeshare->addTimeshared($sha1);
 		while($timeshare->loop()) {
 			
