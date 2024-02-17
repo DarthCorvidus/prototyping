@@ -1,11 +1,11 @@
 <?php
 namespace Examples\Server;
-class ServerProcess implements \Timeshared {
+class ServerProcess implements \plibv4\process\Timeshared {
 	private mixed $server;
 	private mixed $clientId = 0;
-	private \Timeshare $timeshare;
+	private \plibv4\process\Timeshare $timeshare;
 	private $terminated = false;
-	function __construct(\Timeshare $timeshare) {
+	function __construct(\plibv4\process\Timeshare $timeshare) {
 		$this->server = stream_socket_server("tcp://0.0.0.0:8000", $errno, $errstr);
 		$this->timeshare = $timeshare;
 	}
@@ -19,7 +19,7 @@ class ServerProcess implements \Timeshared {
 
 	public function loop(): bool {
 		if($this->terminated) {
-			return false;
+			return true;
 		}
 		$read = array($this->server);
 		$write = array();
@@ -46,7 +46,8 @@ class ServerProcess implements \Timeshared {
 		
 	}
 
-	public function terminate(): void {
+	public function terminate(): bool {
 		$this->terminated = true;
+		return $this->timeshare->terminate();
 	}
 }
