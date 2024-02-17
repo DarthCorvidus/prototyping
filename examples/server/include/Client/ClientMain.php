@@ -1,8 +1,8 @@
 <?php
 namespace Examples\Server;
-class ClientMain implements \TermIOListener, StreamListener, \Timeshared {
+class ClientMain implements \TermIOListener, StreamListener, \plibv4\process\Timeshared {
 	private \TermIO $termio;
-	private \Timeshare $timeshare;
+	private \plibv4\process\Timeshare $timeshare;
 	private Stream $stream;
 	private bool $active = true;
 	private string $command = "";
@@ -11,7 +11,7 @@ class ClientMain implements \TermIOListener, StreamListener, \Timeshared {
 		$client = stream_socket_client("tcp://0.0.0.0:8000", $errno, $errstr);
 		stream_set_blocking($client, false);
 		$this->stream = new Stream($client, $this);
-		$this->timeshare = new \Timeshare();
+		$this->timeshare = new \plibv4\process\Timeshare();
 		$this->timeshare->addTimeshared($this);
 		$this->timeshare->addTimeshared($this->termio);
 		$this->timeshare->addTimeshared($this->stream);
@@ -28,7 +28,7 @@ class ClientMain implements \TermIOListener, StreamListener, \Timeshared {
 	}
 
 	public function loop(): bool {
-	return $this->active;
+		return true;
 	}
 
 	public function onConnect() {
@@ -38,7 +38,6 @@ class ClientMain implements \TermIOListener, StreamListener, \Timeshared {
 	public function onData(string $data) {
 		if($data == "quit") {
 			$this->timeshare->terminate();
-			$this->active = false;
 		return;
 		}
 		$this->termio->addBuffer($data);
@@ -57,9 +56,7 @@ class ClientMain implements \TermIOListener, StreamListener, \Timeshared {
 	}
 	
 	function run() {
-		while($this->timeshare->loop()) {
-			
-		}
+		$this->timeshare->run();
 	}
 
 	public function finish(): void {
@@ -82,7 +79,7 @@ class ClientMain implements \TermIOListener, StreamListener, \Timeshared {
 		
 	}
 
-	public function terminate(): void {
-		$this->active = false;
+	public function terminate(): bool {
+		return true;
 	}
 }
