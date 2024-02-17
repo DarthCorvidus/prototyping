@@ -1,6 +1,6 @@
 <?php
 namespace Examples\Timeshared;
-class Timer implements \Timeshared {
+class Timer implements \plibv4\process\Timeshared {
 	private int $seconds;
 	private int $start = 0;
 	private int $stopped;
@@ -50,7 +50,7 @@ class Timer implements \Timeshared {
 		
 	}
 
-	public function terminate(): void {
-		
+	public function terminate(): bool {
+		return true;
 	}
 }

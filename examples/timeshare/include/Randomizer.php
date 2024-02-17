@@ -1,5 +1,5 @@
 <?php
-class Randomizer implements Timeshared{
+class Randomizer implements plibv4\process\Timeshared {
 	private int $steps;
 	private int $count = 0;
 	private int $startTime;
@@ -14,17 +14,12 @@ class Randomizer implements Timeshared{
 			$this->count++;
 		return true;
 		}
-	echo "Values: ".$this->steps.PHP_EOL;
-	echo "Time:   ".round((hrtime(true)-$this->startTime)/1000000000, 2).PHP_EOL;
 	return false;
 	}
 
-	public function stop(): void {
-		
-	}
-
 	public function finish(): void {
-		
+		echo "Values: ".$this->steps.PHP_EOL;
+		echo "Time:   ".round((hrtime(true)-$this->startTime)/1000000000, 2).PHP_EOL;
 	}
 
 	public function kill(): void {
@@ -43,7 +38,7 @@ class Randomizer implements Timeshared{
 		
 	}
 
-	public function terminate(): void {
-		
+	public function terminate(): bool {
+		return true;
 	}
 }
