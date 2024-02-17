@@ -1,6 +1,6 @@
 <?php
 namespace Examples\Timeshared;
-class ChecksumFile implements \Timeshared, \HashFileObserver {
+class ChecksumFile implements \plibv4\process\Timeshared, \HashFileObserver {
 	private \SHA1File $sha;
 	private string $path;
 	private \TermIO $termio;
@@ -38,7 +38,7 @@ class ChecksumFile implements \Timeshared, \HashFileObserver {
 		$this->sha->resume();
 	}
 
-	public function terminate(): void {
-		$this->sha->terminate();
+	public function terminate(): bool {
+		return $this->sha->terminate();
 	}
 }

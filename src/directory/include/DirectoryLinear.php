@@ -1,18 +1,17 @@
 <?php
-class DirectoryLinear implements Timeshared {
+class DirectoryLinear implements \plibv4\process\Timeshared {
 	private string $path;
 	private array $stack;
 	private int $count = 0;
 	private ?DirectoryObserver $do = null;
 	private ?DirectoryIterator $current = null;
 	private ?FileHandlerFactory $fileHandler = null;
-	private ?Timeshared $currentFileHandler = null;
 	private bool $started = false;
-	private Timeshare $timeshare;
+	private \plibv4\process\Timeshare $timeshare;
 	function __construct(string $path) {
 		$this->path = $path;
 		$this->stack[] = $path;
-		$this->timeshare = new Timeshare();
+		$this->timeshare = new \plibv4\process\Timeshare();
 	}
 	
 	function addDirectoryObserver(DirectoryObserver $observer) {
@@ -141,7 +140,7 @@ class DirectoryLinear implements Timeshared {
 		
 	}
 
-	public function terminate(): void {
-		
+	public function terminate(): true {
+		return $this->timeshare->terminate();
 	}
 }

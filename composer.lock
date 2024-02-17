@@ -265,12 +265,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/DarthCorvidus/plibv4-process",
-                "reference": "29a19c099ddbbf0e26e3787fe496283632972db1"
+                "reference": "94044991f7b317ec6145c7f23f9d8f623206bd96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-process/zipball/29a19c099ddbbf0e26e3787fe496283632972db1",
-                "reference": "29a19c099ddbbf0e26e3787fe496283632972db1",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-process/zipball/94044991f7b317ec6145c7f23f9d8f623206bd96",
+                "reference": "94044991f7b317ec6145c7f23f9d8f623206bd96",
                 "shasum": ""
             },
             "require-dev": {
@@ -291,7 +291,7 @@
                     "./vendor/bin/phpunit --bootstrap tests/autoload.php --testdox --colors=always tests"
                 ]
             },
-            "time": "2024-02-14T18:21:35+00:00"
+            "time": "2024-02-16T20:09:09+00:00"
         },
         {
             "name": "plibv4/profiler",

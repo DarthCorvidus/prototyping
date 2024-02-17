@@ -1,5 +1,5 @@
 <?php
-class TermIO implements Timeshared {
+class TermIO implements \plibv4\process\Timeshared {
 	private TermIOListener $listener;
 	private array $outputBuffer = array();
 	private bool $terminated = false;
@@ -15,11 +15,7 @@ class TermIO implements Timeshared {
 	}
 	
 	public function loop(): bool {
-		$empty = empty($this->outputBuffer);
-		if($empty && $this->terminated) {
-			return false;
-		}
-		if(!$empty) {
+		if(!empty($this->outputBuffer)) {
 			fwrite(STDOUT, array_shift($this->outputBuffer).PHP_EOL);
 		return true;
 		}
@@ -55,7 +51,7 @@ class TermIO implements Timeshared {
 		
 	}
 
-	public function terminate(): void {
-		$this->terminated = true;
+	public function terminate(): bool {
+		return empty($this->outputBuffer);
 	}
 }

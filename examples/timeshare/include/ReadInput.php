@@ -1,8 +1,8 @@
 <?php
 class ReadInput implements TermIOListener, FileHandlerFactory {
-	private Timeshare $timeshare;
+	private \plibv4\process\Timeshare $timeshare;
 	private TermIO $termio;
-	function __construct(Timeshare $timeshare) {
+	function __construct(\plibv4\process\Timeshare $timeshare) {
 		stream_set_blocking(STDIN, false);
 		$this->timeshare = $timeshare;
 	}
@@ -22,7 +22,7 @@ class ReadInput implements TermIOListener, FileHandlerFactory {
 	
 	private function handleOne(TermIO $termio, $command): void {
 		if($command==="exit" or $command === "x") {
-			exit();
+			$this->timeshare->terminate();
 		}
 		if($command === "help") {
 			$termio->addBuffer("du <dir>      disk usage");
@@ -66,7 +66,7 @@ class ReadInput implements TermIOListener, FileHandlerFactory {
 		}
 	}
 
-	public function onFile(\SplFileInfo $info): \Timeshared {
+	public function onFile(\SplFileInfo $info): \plibv4\process\Timeshared {
 		return new \Examples\Timeshared\ChecksumFile($info, $this->termio);
 	}
 }
