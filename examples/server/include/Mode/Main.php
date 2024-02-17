@@ -4,14 +4,21 @@ class Main implements \Examples\Server\StreamListener {
 	private bool $active = true;
 	private array $buffer = array();
 	private int $requests = 0;
+	private ?\Examples\Server\StreamListener $delegate = null;
 	function __construct() {
 		$this->buffer[] = "Welcome to experimental server 0.1, use 'help' for help.";
 	}
 	public function getData(): string {
+		if($this->delegate) {
+			return $this->delegate->getData();
+		}
 		return array_shift($this->buffer);
 	}
 
 	public function hasData(): bool {
+		if($this->delegate) {
+			return $this->delegate->hasData();
+		}
 		if(!empty($this->buffer)) {
 			return true;
 		}
@@ -19,6 +26,11 @@ class Main implements \Examples\Server\StreamListener {
 	}
 
 	public function loop(): bool {
+		if($this->delegate) {
+			if(!$this->delegate->loop()) {
+				$this->delegate = null;
+			}
+		}
 		if($this->active) {
 			return true;
 		}
@@ -33,6 +45,10 @@ class Main implements \Examples\Server\StreamListener {
 	}
 
 	public function onData(string $data) {
+		if($this->delegate) {
+			$this->delegate->onData($data);
+		return;
+		}
 		$this->requests++;
 		if($data == "quit") {
 			$this->buffer[] = "Received quit at ".date("Y-m-d H:i:s");
@@ -47,6 +63,11 @@ class Main implements \Examples\Server\StreamListener {
 			$this->buffer[] = "help - this help";
 		return;
 		}
+		
+		if($data == "count") {
+			$this->delegate = new \Examples\Server\Counter(15, 1);
+		return;
+		}
 	$this->buffer[] = "Unknown command.";
 	}
 
@@ -54,6 +75,10 @@ class Main implements \Examples\Server\StreamListener {
 	}
 	
 	public function onTerminate() {
+		if($this->delegate) {
+			$this->delegate->onTerminate();
+			$this->delegate = null;
+		}
 		$this->buffer[] = "Server side shutdown.";
 		$this->buffer[] = "quit";
 	}
