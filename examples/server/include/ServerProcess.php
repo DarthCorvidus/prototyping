@@ -21,7 +21,7 @@ class ServerProcess implements \plibv4\process\Timeshared {
 
 	public function loop(): bool {
 		if($this->terminated) {
-			return true;
+			return $this->timeshare->loop();
 		}
 		$this->timeshare->loop();
 		$read = array($this->server);

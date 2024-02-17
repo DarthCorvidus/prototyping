@@ -3,6 +3,7 @@ namespace Examples\Server;
 class Stream implements \plibv4\process\Timeshared {
 	private mixed $conn;
 	private StreamListener $listener;
+	private $terminated = false;
 	function __construct(mixed $conn, StreamListener $listener) {
 		$this->conn = $conn;
 		stream_set_blocking($this->conn, false);
@@ -66,8 +67,12 @@ class Stream implements \plibv4\process\Timeshared {
 	}
 
 	public function terminate(): bool {
-		if(!$this->listener->hasData()) {
+		if(!$this->terminated) {
 			$this->listener->onDisconnect();
+			$this->terminated = true;
+		return false;
+		}
+		if(!$this->listener->hasData()) {
 			return true;
 		}
 	return false;
