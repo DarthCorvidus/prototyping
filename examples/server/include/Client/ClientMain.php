@@ -46,6 +46,10 @@ class ClientMain implements \TermIOListener, StreamListener, \plibv4\process\Tim
 	public function onDisconnect() {
 		
 	}
+	
+	public function onTerminate() {
+		;
+	}
 
 	public function onInput(\TermIO $termio, string $input) {
 		if($input == "status") {

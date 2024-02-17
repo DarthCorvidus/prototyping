@@ -6,5 +6,9 @@ interface StreamListener {
 	function getData(): string;
 	function onConnect();
 	function onDisconnect();
+	/**
+	 * To be called if Stream::terminate() was called.
+	 */
+	function onTerminate();
 	function loop(): bool;
 }

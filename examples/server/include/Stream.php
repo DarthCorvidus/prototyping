@@ -68,7 +68,7 @@ class Stream implements \plibv4\process\Timeshared {
 
 	public function terminate(): bool {
 		if(!$this->terminated) {
-			$this->listener->onDisconnect();
+			$this->listener->onTerminate();
 			$this->terminated = true;
 		return false;
 		}
