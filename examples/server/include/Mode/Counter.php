@@ -14,7 +14,7 @@ class Counter implements StreamListener {
 
 	public function getData(): string {
 		$this->current++;
-		return $this->current;
+		return StreamBinary::putPayload($this->current, $this->getBlocksize());
 	}
 
 	public function hasData(): bool {

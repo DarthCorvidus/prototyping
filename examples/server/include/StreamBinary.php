@@ -21,4 +21,16 @@ class StreamBinary extends Stream {
 		fwrite($this->conn, $data);
 	return true;
 	}
+	
+	static function putPayload(string $data, int $length) {
+		$payloadLength = strlen($data);
+		$header = \IntVal::uint16BE()->putValue($payloadLength);
+		$padded = $header.$data.random_bytes($length - strlen($data)-2);
+	return $padded;
+	}
+	
+	static function getPayload(string $data): string {
+		$payloadLength = \IntVal::uint16BE()->getValue(substr($data, 0, 2));
+	return substr($data, 2, $payloadLength);
+	}
 }

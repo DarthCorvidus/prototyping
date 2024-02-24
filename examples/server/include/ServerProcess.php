@@ -30,7 +30,7 @@ class ServerProcess implements \plibv4\process\Timeshared {
 			return true;
 		}
 		$client = stream_socket_accept($this->server);
-		$clientStream = new StreamText($client, new \Examples\Server\Mode\Main());
+		$clientStream = new StreamBinary($client, new \Examples\Server\Mode\Main());
 		$this->timeshare->addTimeshared($clientStream);
 		echo "Client accepted, ".$this->timeshare->getProcessCount()." processes.".PHP_EOL;
 		$this->clientId++;

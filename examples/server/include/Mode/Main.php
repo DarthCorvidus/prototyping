@@ -12,9 +12,9 @@ class Main implements \Examples\Server\StreamListener {
 		if($this->delegate) {
 			return $this->delegate->getData();
 		}
-		return array_shift($this->buffer);
+		return \Examples\Server\StreamBinary::putPayload(array_shift($this->buffer), $this->getBlocksize());
 	}
-
+	
 	public function hasData(): bool {
 		if($this->delegate) {
 			return $this->delegate->hasData();
@@ -45,6 +45,7 @@ class Main implements \Examples\Server\StreamListener {
 	}
 
 	public function onData(string $data) {
+		$data = \Examples\Server\StreamBinary::getPayload($data);
 		if($this->delegate) {
 			$this->delegate->onData($data);
 		return;

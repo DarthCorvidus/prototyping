@@ -3,14 +3,14 @@ namespace Examples\Server;
 class ClientMain implements \TermIOListener, StreamListener, \plibv4\process\Timeshared {
 	private \TermIO $termio;
 	private \plibv4\process\Timeshare $timeshare;
-	private StreamText $stream;
+	private StreamBinary $stream;
 	private bool $active = true;
 	private string $command = "";
 	function __construct() {
 		$this->termio = new \TermIO($this);
 		$client = stream_socket_client("tcp://0.0.0.0:8000", $errno, $errstr);
 		stream_set_blocking($client, false);
-		$this->stream = new StreamText($client, $this);
+		$this->stream = new StreamBinary($client, $this);
 		$this->timeshare = new \plibv4\process\Timeshare();
 		$this->timeshare->addTimeshared($this);
 		$this->timeshare->addTimeshared($this->termio);
@@ -20,7 +20,7 @@ class ClientMain implements \TermIOListener, StreamListener, \plibv4\process\Tim
 	public function getData(): string {
 		$command = $this->command;
 		$this->command = "";
-	return $command;
+	return StreamBinary::putPayload($command, $this->getBlocksize());
 	}
 
 	public function hasData(): bool {
@@ -36,6 +36,7 @@ class ClientMain implements \TermIOListener, StreamListener, \plibv4\process\Tim
 	}
 
 	public function onData(string $data) {
+		$data = \Examples\Server\StreamBinary::getPayload($data);
 		if($data == "quit") {
 			$this->timeshare->terminate();
 		return;
