@@ -1,15 +1,9 @@
 <?php
 namespace Examples\Server;
-class Stream implements \plibv4\process\Timeshared {
-	private mixed $conn;
-	private StreamListener $listener;
-	private $terminated = false;
-	function __construct(mixed $conn, StreamListener $listener) {
-		$this->conn = $conn;
-		stream_set_blocking($this->conn, false);
-		$this->listener = $listener;
-	}
-
+abstract class Stream implements \plibv4\process\Timeshared {
+	protected mixed $conn;
+	private bool $quit = false;
+	protected $terminated = false;
 	public function finish(): void {
 		fclose($this->conn);
 	}
@@ -18,20 +12,9 @@ class Stream implements \plibv4\process\Timeshared {
 		
 	}
 
-	private function read() {
-		$input = fgets($this->conn);
-		if($input === false) {
-			return true;
-		}
-		$this->listener->onData(trim($input));
-	return true;
-	}
+	protected abstract function read(): bool;
 	
-	private function write() {
-		$data = $this->listener->getData();
-		fwrite($this->conn, $data.PHP_EOL);
-	return true;
-	}
+	protected abstract function write(): bool;
 	
 	function close() {
 		$this->quit = true;

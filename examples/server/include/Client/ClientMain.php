@@ -3,14 +3,14 @@ namespace Examples\Server;
 class ClientMain implements \TermIOListener, StreamListener, \plibv4\process\Timeshared {
 	private \TermIO $termio;
 	private \plibv4\process\Timeshare $timeshare;
-	private Stream $stream;
+	private StreamText $stream;
 	private bool $active = true;
 	private string $command = "";
 	function __construct() {
 		$this->termio = new \TermIO($this);
 		$client = stream_socket_client("tcp://0.0.0.0:8000", $errno, $errstr);
 		stream_set_blocking($client, false);
-		$this->stream = new Stream($client, $this);
+		$this->stream = new StreamText($client, $this);
 		$this->timeshare = new \plibv4\process\Timeshare();
 		$this->timeshare->addTimeshared($this);
 		$this->timeshare->addTimeshared($this->termio);
