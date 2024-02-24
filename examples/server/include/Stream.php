@@ -3,7 +3,8 @@ namespace Examples\Server;
 abstract class Stream implements \plibv4\process\Timeshared {
 	protected mixed $conn;
 	private bool $quit = false;
-	protected $terminated = false;
+	protected bool $terminated = false;
+	protected StreamListener $listener;
 	public function finish(): void {
 		fclose($this->conn);
 	}

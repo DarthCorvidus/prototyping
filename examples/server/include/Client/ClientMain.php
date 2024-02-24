@@ -86,4 +86,8 @@ class ClientMain implements \TermIOListener, StreamListener, \plibv4\process\Tim
 	public function terminate(): bool {
 		return true;
 	}
+
+	public function getBlocksize(): int {
+		return 512;
+	}
 }

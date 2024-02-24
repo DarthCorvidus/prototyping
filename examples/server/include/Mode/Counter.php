@@ -55,4 +55,8 @@ class Counter implements StreamListener {
 	public function onTerminate() {
 		
 	}
+
+	public function getBlocksize(): int {
+		return 512;
+	}
 }

@@ -82,4 +82,8 @@ class Main implements \Examples\Server\StreamListener {
 		$this->buffer[] = "Server side shutdown.";
 		$this->buffer[] = "quit";
 	}
+
+	public function getBlocksize(): int {
+		return 512;
+	}
 }

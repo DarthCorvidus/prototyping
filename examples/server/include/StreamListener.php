@@ -11,4 +11,5 @@ interface StreamListener {
 	 */
 	function onTerminate();
 	function loop(): bool;
+	function getBlocksize(): int;
 }
