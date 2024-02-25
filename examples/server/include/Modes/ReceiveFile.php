@@ -23,7 +23,13 @@ class ReceiveFile implements StreamListener {
 	}
 
 	public function loop(): bool {
-		return true;
+		if($this->started == false) {
+			return true;
+		}
+		if($this->left > 0) {
+			return true;
+		}
+	return false;
 	}
 
 	public function onConnect() {

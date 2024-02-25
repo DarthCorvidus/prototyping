@@ -43,7 +43,7 @@ class SendReceiveTest extends TestCase {
 	function testLarge() {
 		$send = new Examples\Server\SendFile(self::getSendPath()."/large.bin");
 		$receive = new Examples\Server\ReceiveFile(self::getReceivePath());
-		while($send->hasData()) {
+		while($send->hasData() && $receive->loop()) {
 			$receive->onData($send->getData());
 		}
 		$receive->onTerminate();
@@ -51,6 +51,7 @@ class SendReceiveTest extends TestCase {
 		$recvpath = self::getReceivePath()."/large.bin";
 		$this->assertSame(filesize($sendpath), filesize($recvpath));
 		$this->assertSame(sha1_file(self::getSendPath()."/large.bin"), sha1_file(self::getReceivePath()."/large.bin"));
+		$this->assertSame(false, $receive->loop());
 	}
 	
 	function testBlock() {
@@ -58,12 +59,13 @@ class SendReceiveTest extends TestCase {
 		$recvpath = self::getReceivePath()."/block.bin";
 		$send = new Examples\Server\SendFile($sendpath);
 		$receive = new Examples\Server\ReceiveFile(self::getReceivePath());
-		while($send->hasData()) {
+		while($send->hasData() && $receive->loop()) {
 			$receive->onData($send->getData());
 		}
 		$receive->onTerminate();
 		$this->assertSame(filesize($sendpath), filesize($recvpath));
 		$this->assertSame(sha1_file($sendpath), sha1_file($recvpath));
+		$this->assertSame(false, $receive->loop());
 	}
 	
 	function testSmall() {
@@ -71,12 +73,13 @@ class SendReceiveTest extends TestCase {
 		$recvpath = self::getReceivePath()."/small.bin";
 		$send = new Examples\Server\SendFile($sendpath);
 		$receive = new Examples\Server\ReceiveFile(self::getReceivePath());
-		while($send->hasData()) {
+		while($send->hasData() && $receive->loop()) {
 			$receive->onData($send->getData());
 		}
 		$receive->onTerminate();
 		$this->assertSame(filesize($sendpath), filesize($recvpath));
 		$this->assertSame(sha1_file($sendpath), sha1_file($recvpath));
+		$this->assertSame(false, $receive->loop());
 	}
 	
 	function testZero() {
@@ -84,12 +87,13 @@ class SendReceiveTest extends TestCase {
 		$recvpath = self::getReceivePath()."/zero.bin";
 		$send = new Examples\Server\SendFile($sendpath);
 		$receive = new Examples\Server\ReceiveFile(self::getReceivePath());
-		while($send->hasData()) {
+		while($send->hasData() && $receive->loop()) {
 			$receive->onData($send->getData());
 		}
 		$receive->onTerminate();
 		$this->assertSame(filesize($sendpath), filesize($recvpath));
 		$this->assertSame(sha1_file($sendpath), sha1_file($recvpath));
+		$this->assertSame(false, $receive->loop());
 	}
 
 }
