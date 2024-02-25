@@ -40,11 +40,12 @@ class SendFile implements StreamListener {
 	}
 
 	public function hasData(): bool {
-		return $this->left > 0;
+		// First block is always sent so zero length files are sent too.
+		return $this->left > 0 or $this->block === 0;
 	}
 
 	public function loop(): bool {
-		return $this->left > 0;
+		return $this->left > 0 or $this->block === 0;
 	}
 
 	public function onConnect() {

@@ -5,7 +5,8 @@ class SHA1FileTest extends TestCase implements HashFileObserver {
 	private string $observerHash = "";
 	private ?SHA1File $observerObject = null;
 	function setUp(): void {
-		file_put_contents(__DIR__."/test.bin", random_bytes(1024*1024*10));
+		#file_put_contents(__DIR__."/test.bin", random_bytes(1024*1024*10));
+		file_put_contents(__DIR__."/test.bin", random_bytes(1024));
 	}
 	
 	public function onHashed(SHA1File $sha1, string $hash): void {
