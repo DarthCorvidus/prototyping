@@ -6,6 +6,7 @@ class ClientMain implements \TermIOListener, StreamListener, \plibv4\process\Tim
 	private StreamBinary $stream;
 	private bool $active = true;
 	private string $command = "";
+	private ?StreamListener $delegate = null;
 	function __construct() {
 		$this->termio = new \TermIO($this);
 		$client = stream_socket_client("tcp://0.0.0.0:8000", $errno, $errstr);

@@ -85,6 +85,9 @@ class Main implements \Examples\Server\StreamListener {
 	}
 
 	public function getBlocksize(): int {
+		if($this->delegate) {
+			return $this->delegate->getBlocksize();
+		}
 		return 512;
 	}
 }
