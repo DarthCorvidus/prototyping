@@ -14,13 +14,13 @@ class Counter implements StreamListener {
 
 	public function getData(): string {
 		$this->current++;
+		$this->delta = 0;
+		$this->last = microtime(true);
 		return StreamBinary::putPayload($this->current, $this->getBlocksize());
 	}
 
 	public function hasData(): bool {
 		if($this->current < $this->times && $this->delta >= 1) {
-			$this->last = microtime(true);
-			$this->delta = 0;
 			return true;
 		}
 	return false;
