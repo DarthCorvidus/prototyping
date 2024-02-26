@@ -28,6 +28,7 @@ class Main implements \Examples\Server\StreamListener {
 	public function loop(): bool {
 		if($this->delegate) {
 			if(!$this->delegate->loop()) {
+				echo "Switching from delegate ".$this->delegate::class.PHP_EOL;
 				$this->delegate = null;
 			}
 		}
@@ -45,11 +46,12 @@ class Main implements \Examples\Server\StreamListener {
 	}
 
 	public function onData(string $data) {
-		$data = \Examples\Server\StreamBinary::getPayload($data);
 		if($this->delegate) {
 			$this->delegate->onData($data);
 		return;
 		}
+		$data = \Examples\Server\StreamBinary::getPayload($data);
+		echo "got command ".$data.PHP_EOL;
 		$this->requests++;
 		if($data == "quit") {
 			$this->buffer[] = "Received quit at ".date("Y-m-d H:i:s");
@@ -60,13 +62,20 @@ class Main implements \Examples\Server\StreamListener {
 		return;
 		}
 		if($data == "help") {
-			$this->buffer[] = "quit - end connection";
-			$this->buffer[] = "help - this help";
+			$this->buffer[] = "put <filename>   upload file";
+			$this->buffer[] = "quit             end connection";
+			$this->buffer[] = "help             this help";
 		return;
 		}
 		
 		if($data == "count") {
 			$this->delegate = new \Examples\Server\Counter(15, 1);
+		return;
+		}
+		if($data == "put") {
+			$this->delegate = new \Examples\Server\ReceiveFile("/tmp/");
+			echo "Switching to delegate ".$this->delegate::class.PHP_EOL;
+			#$this->buffer[] = "send";
 		return;
 		}
 	$this->buffer[] = "Unknown command.";

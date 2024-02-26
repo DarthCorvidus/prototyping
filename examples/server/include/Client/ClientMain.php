@@ -6,6 +6,7 @@ class ClientMain implements \TermIOListener, StreamListener, \plibv4\process\Tim
 	private StreamBinary $stream;
 	private bool $active = true;
 	private string $command = "";
+	private ?StreamListener $prepared = null;
 	private ?StreamListener $delegate = null;
 	function __construct() {
 		$this->termio = new \TermIO($this);
@@ -19,16 +20,39 @@ class ClientMain implements \TermIOListener, StreamListener, \plibv4\process\Tim
 	}
 
 	public function getData(): string {
+		if($this->delegate != null) {
+			return $this->delegate->getData();
+		}
 		$command = $this->command;
+		/*
+		 * Take the prepared delegate, but send out the last command first.
+		 */
+		if($this->command == "put") {
+			$this->delegate = $this->prepared;
+			$this->prepared = null;
+			echo "Switching to delegate ".$this->prepared::class.PHP_EOL;
+		}
 		$this->command = "";
-	return StreamBinary::putPayload($command, $this->getBlocksize());
+		/**
+		 * Magic Number is a little bit sucky here, as the command has to be
+		 * written with 512 bytes, but the delegate is active already.
+		 */
+	return StreamBinary::putPayload($command, 512);
 	}
 
 	public function hasData(): bool {
+		if($this->delegate != null) {
+			return $this->delegate->hasData();
+		}
 		return $this->command != "";
 	}
 
 	public function loop(): bool {
+		if($this->delegate != null && $this->delegate->loop() == false) {
+			echo "Switching from delegate ".$this->prepared::class.PHP_EOL;
+			$this->delegate->onTerminate();
+			$this->delegate = null;
+		}
 		return true;
 	}
 
@@ -37,6 +61,10 @@ class ClientMain implements \TermIOListener, StreamListener, \plibv4\process\Tim
 	}
 
 	public function onData(string $data) {
+		if($this->delegate != null) {
+			$this->delegate->onData($data);
+		return;
+		}
 		$data = \Examples\Server\StreamBinary::getPayload($data);
 		if($data == "quit") {
 			$this->timeshare->terminate();
@@ -57,6 +85,21 @@ class ClientMain implements \TermIOListener, StreamListener, \plibv4\process\Tim
 		if($input == "status") {
 			$this->termio->addBuffer("Local process count: ".$this->timeshare->getProcessCount());
 		}
+		if($input == "put") {
+			$this->termio->addBuffer("'put' needs filename");
+		return;
+		}
+		$explode = explode(" ", $input, 2);
+		if($explode[0]=="put" && !is_file($explode[1])) {
+			$this->termio->addBuffer("no such file.");
+		return;
+		} 
+		if($explode[0]=="put" && is_file($explode[1])) {
+			$this->prepared = new SendFile($explode[1]);
+			$this->command = "put";
+		return;
+		} 
+
 		$this->command = $input;
 		echo $this->termio->addBuffer("Your input: ".$input);
 	}
@@ -90,6 +133,9 @@ class ClientMain implements \TermIOListener, StreamListener, \plibv4\process\Tim
 	}
 
 	public function getBlocksize(): int {
+		if($this->delegate) {
+			return $this->delegate->getBlocksize();
+		}
 		return 512;
 	}
 }
