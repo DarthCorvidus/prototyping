@@ -50,11 +50,11 @@ class ReceiveFile implements StreamListener {
 		return;
 		}
 		if($this->left >= 4096) {
-			fwrite($this->handle, $data);
-			$this->left -= 4096;
+			$written = fwrite($this->handle, $data);
+			$this->left -= $written;
 		} else {
-			fwrite($this->handle, substr($data, 0, $this->left));
-			$this->left -= 4096;
+			$written = fwrite($this->handle, substr($data, 0, $this->left));
+			$this->left -= $written;
 		}
 	}
 
