@@ -18,7 +18,10 @@ class StreamBinary extends Stream {
 	
 	protected function write(): bool {
 		$data = $this->listener->getData();
-		fwrite($this->conn, $data);
+		$written = fwrite($this->conn, $data);
+		if($written === false) {
+			throw new \RuntimeException("unable to write to stream");
+		}
 	return true;
 	}
 	

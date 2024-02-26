@@ -30,11 +30,22 @@ abstract class Stream implements \plibv4\process\Timeshared {
 			$this->listener->onDisconnect();
 		return false;
 		}
-		$hasData = $this->listener->hasData();
-		if($hasData) {
+		/**
+		 * 
+		 */
+		$read = array($this->conn);
+		$write = array();
+		if($this->listener->hasData()) {
+			$write[] = $this->conn;
+		}
+		stream_select($read, $write, $except, 0);
+		if(!empty($write)) {
 			return $this->write();
 		}
-		$this->read();
+		if(!empty($read)) {
+			$this->read();
+		}
+		
 	return true;
 	}
 	
