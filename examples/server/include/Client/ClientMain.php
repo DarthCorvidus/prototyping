@@ -23,21 +23,23 @@ class ClientMain implements \TermIOListener, StreamListener, \plibv4\process\Tim
 		if($this->delegate != null) {
 			return $this->delegate->getData();
 		}
-		$command = $this->command;
-		/*
-		 * Take the prepared delegate, but send out the last command first.
+		// Create message.
+		$msg = StreamBinary::putPayload($this->command, $this->getBlocksize());
+		/**
+		 * If there is a prepared delegate, set it as delegate and clear
+		 * $this->prepared.
 		 */
-		if($this->command == "put") {
+		if($this->prepared) {
 			$this->delegate = $this->prepared;
 			$this->prepared = null;
-			echo "Switching to delegate ".$this->prepared::class.PHP_EOL;
+			echo "Switching to delegate ".$this->delegate::class.PHP_EOL;
 		}
-		$this->command = "";
-		/**
-		 * Magic Number is a little bit sucky here, as the command has to be
-		 * written with 512 bytes, but the delegate is active already.
+		/*
+		 * Send command. If a delegate became active, it will only work now.
 		 */
-	return StreamBinary::putPayload($command, 512);
+		
+		$this->command = "";
+	return $msg;
 	}
 
 	public function hasData(): bool {
@@ -49,7 +51,7 @@ class ClientMain implements \TermIOListener, StreamListener, \plibv4\process\Tim
 
 	public function loop(): bool {
 		if($this->delegate != null && $this->delegate->loop() == false) {
-			echo "Switching from delegate ".$this->prepared::class.PHP_EOL;
+			echo "Switching from delegate ".$this->delegate::class.PHP_EOL;
 			$this->delegate->onTerminate();
 			$this->delegate = null;
 		}
