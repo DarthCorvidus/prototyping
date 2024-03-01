@@ -5,6 +5,7 @@ class ServerMain implements \TermIOListener {
 	private \TermIO $termio;
 	private ServerProcess $server;
 	private static ?ServerMain $singleton = null;
+	private $started;
 	private function __construct() {
 		if(!file_exists(self::getRepoDir())) {
 			mkdir(self::getRepoDir());
@@ -16,6 +17,7 @@ class ServerMain implements \TermIOListener {
 		$this->server = new ServerProcess($this->timeshare);
 		$this->timeshare->addTimeshared($this->server);
 		$this->timeshare->addTimeshared($this->termio);
+		$this->started = time();
 	}
 	
 	public static function init(): ServerMain {
@@ -30,6 +32,14 @@ class ServerMain implements \TermIOListener {
 		self::$singleton->termio->addBuffer("Shutting down server.");
 		self::$singleton->timeshare->terminate();
 	}
+
+	public static function status(): array {
+		$status[] = "Server status:";
+		$convert = new \ConvertTime(\ConvertTime::SECONDS, \ConvertTime::HMS);
+		$status[] = "  Runtime: ".$convert->convert(time()-self::$singleton->started);
+		$status[] = "  Connected clients: ".self::$singleton->server->getClientCount();
+	return $status;
+	}
 	
 	static function getRepoDir(): string {
 		return "/tmp/prototyping";
@@ -42,11 +52,12 @@ class ServerMain implements \TermIOListener {
 	public function onInput(\TermIO $termio, string $input) {
 		if($input === "halt") {
 			self::halt();
-			#$this->termio->addBuffer("Shutting down server.");
-			#$this->timeshare->terminate();
 		}
 		if($input === "status") {
-			$this->termio->addBuffer("Process count: ".$this->timeshare->getProcessCount());
+			foreach(self::status() as $value) {
+				$this->termio->addBuffer($value);
+			}
+			
 		}
 	}
 }

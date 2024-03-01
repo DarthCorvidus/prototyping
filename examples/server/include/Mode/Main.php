@@ -66,6 +66,7 @@ class Main implements \Examples\Server\StreamListener {
 			$this->buffer[] = "quit             end connection";
 			$this->buffer[] = "help             this help";
 			$this->buffer[] = "halt             shutdown server";
+			$this->buffer[] = "status           server status";
 		return;
 		}
 		
@@ -81,6 +82,10 @@ class Main implements \Examples\Server\StreamListener {
 		}
 		if($data == "halt") {
 			\Examples\Server\ServerMain::halt();
+		}
+		if($data == "status") {
+			$this->buffer = array_merge($this->buffer, \Examples\Server\ServerMain::status());
+		return;
 		}
 	$this->buffer[] = "Unknown command.";
 	}

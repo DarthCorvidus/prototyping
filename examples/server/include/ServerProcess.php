@@ -6,6 +6,7 @@ class ServerProcess implements \plibv4\process\Timeshared {
 	private \plibv4\process\Timeshare $timeshare;
 	private \plibv4\process\Timeshare $parent;
 	private $terminated = false;
+	private int $connected = 0;
 	function __construct(\plibv4\process\Timeshare $timeshare) {
 		$this->server = stream_socket_server("tcp://0.0.0.0:8000", $errno, $errstr);
 		$this->timeshare = new \plibv4\process\Timeshare();
@@ -34,9 +35,14 @@ class ServerProcess implements \plibv4\process\Timeshared {
 		$this->timeshare->addTimeshared($clientStream);
 		echo "Client accepted, ".$this->timeshare->getProcessCount()." processes.".PHP_EOL;
 		$this->clientId++;
+		$this->connected++;
 	return true;
 	}
-
+	
+	public function getClientCount(): int {
+		return $this->connected;
+	}
+	
 	public function pause(): void {
 		
 	}

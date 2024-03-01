@@ -8,6 +8,7 @@ class ClientMain implements \TermIOListener, StreamListener, \plibv4\process\Tim
 	private string $command = "";
 	private ?StreamListener $prepared = null;
 	private ?StreamListener $delegate = null;
+	private int $started = 0;
 	function __construct() {
 		$this->termio = new \TermIO($this);
 		$client = stream_socket_client("tcp://0.0.0.0:8000", $errno, $errstr);
@@ -17,6 +18,7 @@ class ClientMain implements \TermIOListener, StreamListener, \plibv4\process\Tim
 		$this->timeshare->addTimeshared($this);
 		$this->timeshare->addTimeshared($this->termio);
 		$this->timeshare->addTimeshared($this->stream);
+		$this->started = time();
 	}
 
 	public function getData(): string {
@@ -85,7 +87,12 @@ class ClientMain implements \TermIOListener, StreamListener, \plibv4\process\Tim
 
 	public function onInput(\TermIO $termio, string $input) {
 		if($input == "status") {
-			$this->termio->addBuffer("Local process count: ".$this->timeshare->getProcessCount());
+			$this->termio->addBuffer("Client status:");
+			$convert = new \ConvertTime(\ConvertTime::SECONDS, \ConvertTime::HMS);
+			$this->termio->addBuffer("  Runtime: ".$convert->convert(time()-$this->started));
+			$this->termio->addBuffer("  Local process count: ".$this->timeshare->getProcessCount());
+			$this->command = "status";
+		return;
 		}
 		if($input == "put") {
 			$this->termio->addBuffer("'put' needs filename");
