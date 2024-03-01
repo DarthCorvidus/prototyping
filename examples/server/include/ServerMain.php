@@ -4,7 +4,8 @@ class ServerMain implements \TermIOListener {
 	private \plibv4\process\Timeshare $timeshare;
 	private \TermIO $termio;
 	private ServerProcess $server;
-	function __construct() {
+	private static ?ServerMain $singleton = null;
+	private function __construct() {
 		if(!file_exists(self::getRepoDir())) {
 			mkdir(self::getRepoDir());
 		}
@@ -17,6 +18,19 @@ class ServerMain implements \TermIOListener {
 		$this->timeshare->addTimeshared($this->termio);
 	}
 	
+	public static function init(): ServerMain {
+		if(self::$singleton != null) {
+			throw new \RuntimeException(self::class." already initialized.");
+		}
+		self::$singleton = new ServerMain();
+	return self::$singleton;
+	}
+	
+	public static function halt() {
+		self::$singleton->termio->addBuffer("Shutting down server.");
+		self::$singleton->timeshare->terminate();
+	}
+	
 	static function getRepoDir(): string {
 		return "/tmp/prototyping";
 	}
@@ -27,8 +41,9 @@ class ServerMain implements \TermIOListener {
 
 	public function onInput(\TermIO $termio, string $input) {
 		if($input === "halt") {
-			$this->termio->addBuffer("Shutting down server.");
-			$this->timeshare->terminate();
+			self::halt();
+			#$this->termio->addBuffer("Shutting down server.");
+			#$this->timeshare->terminate();
 		}
 		if($input === "status") {
 			$this->termio->addBuffer("Process count: ".$this->timeshare->getProcessCount());
