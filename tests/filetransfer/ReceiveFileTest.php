@@ -38,6 +38,29 @@ class ReceiveFileTest extends TestCase {
 		$receive->onTerminate();
 	}
 	
+	function testCheckFilename() {
+		$random = random_bytes(self::SIZE);
+		$first = chr(0).chr(0).chr(0).chr(0).chr(0).chr(0).chr(129).chr(65);
+		$first .= chr(0).chr(14);
+		$first .= "../../test.bin";
+		$first .= substr($random, 18, 4096-18);
+
+		$receive = new Examples\Server\ReceiveFile(__DIR__);
+		$receive->onData($first);
+		
+		$reflection = new ReflectionClass($receive);
+		$name = $reflection->getProperty("filename");
+		$name->setAccessible(true);
+		
+		$this->assertSame("test.bin", $name->getValue($receive));
+		
+				
+				
+		#$receive->loop();
+		#$this->assertFileExists(__DIR__."/test.bin");
+		#$receive->onTerminate();
+	}
+	
 	function testFile() {
 		$random = random_bytes(self::SIZE);
 		$first = chr(0).chr(0).chr(0).chr(0).chr(0).chr(0).chr(129).chr(65);
