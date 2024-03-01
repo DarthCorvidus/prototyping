@@ -41,7 +41,12 @@ class ReceiveFile implements StreamListener {
 			$reader = new \plibv4\Binary\StringReader($data, \plibv4\Binary\StringReader::BE);
 			$this->size = $reader->getUInt64();
 			$this->left = $this->size;
-			$this->filename = $reader->getIndexedString(16);
+			/*
+			 * Returns the basename, to prevent a malicious client from writing
+			 * outside the designated target folder by using ../ or an absolute
+			 * path.
+			 */
+			$this->filename = basename($reader->getIndexedString(16));
 			$this->started = true;
 			$data = substr($data, 10+strlen($this->filename));
 			$this->handle = fopen($this->path."/".$this->filename, "w");

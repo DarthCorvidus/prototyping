@@ -5,11 +5,20 @@ class ServerMain implements \TermIOListener {
 	private \TermIO $termio;
 	private ServerProcess $server;
 	function __construct() {
+		if(!file_exists(self::getRepoDir())) {
+			mkdir(self::getRepoDir());
+		}
 		$this->timeshare = new \plibv4\process\Timeshare();
 		$this->termio = new \TermIO($this);
+		$this->termio->addBuffer("Experimental file server 0.1");
+		$this->termio->addBuffer("Use 'halt' to shut down server or 'status' for information.");
 		$this->server = new ServerProcess($this->timeshare);
 		$this->timeshare->addTimeshared($this->server);
 		$this->timeshare->addTimeshared($this->termio);
+	}
+	
+	static function getRepoDir(): string {
+		return "/tmp/prototyping";
 	}
 	
 	function run() {
