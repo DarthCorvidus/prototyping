@@ -65,6 +65,7 @@ class Main implements \Examples\Server\StreamListener {
 			$this->buffer[] = "put <filename>   upload file";
 			$this->buffer[] = "quit             end connection";
 			$this->buffer[] = "help             this help";
+			$this->buffer[] = "halt             shutdown server";
 		return;
 		}
 		
@@ -77,6 +78,9 @@ class Main implements \Examples\Server\StreamListener {
 			echo "Switching to delegate ".$this->delegate::class.PHP_EOL;
 			#$this->buffer[] = "send";
 		return;
+		}
+		if($data == "halt") {
+			\Examples\Server\ServerMain::halt();
 		}
 	$this->buffer[] = "Unknown command.";
 	}
