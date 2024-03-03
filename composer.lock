@@ -265,12 +265,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/DarthCorvidus/plibv4-process",
-                "reference": "c2840b7be7cc5a90ad1fa64733a334d5f2859df6"
+                "reference": "d3c1d78230b2db477ebff96651ccf0e740f490d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-process/zipball/c2840b7be7cc5a90ad1fa64733a334d5f2859df6",
-                "reference": "c2840b7be7cc5a90ad1fa64733a334d5f2859df6",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-process/zipball/d3c1d78230b2db477ebff96651ccf0e740f490d4",
+                "reference": "d3c1d78230b2db477ebff96651ccf0e740f490d4",
                 "shasum": ""
             },
             "require-dev": {
@@ -291,7 +291,7 @@
                     "./vendor/bin/phpunit --bootstrap tests/autoload.php --testdox --colors=always tests"
                 ]
             },
-            "time": "2024-03-02T19:58:01+00:00"
+            "time": "2024-03-03T11:52:18+00:00"
         },
         {
             "name": "plibv4/profiler",
@@ -664,12 +664,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phar-io/manifest.git",
-                "reference": "67729272c564ab9f953c81f48db44e8b1cb1e1c3"
+                "reference": "e1da028f27c66d00b0a4a97ffb6b81192d88e4b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phar-io/manifest/zipball/67729272c564ab9f953c81f48db44e8b1cb1e1c3",
-                "reference": "67729272c564ab9f953c81f48db44e8b1cb1e1c3",
+                "url": "https://api.github.com/repos/phar-io/manifest/zipball/e1da028f27c66d00b0a4a97ffb6b81192d88e4b6",
+                "reference": "e1da028f27c66d00b0a4a97ffb6b81192d88e4b6",
                 "shasum": ""
             },
             "require": {
@@ -724,7 +724,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-06-01T14:19:47+00:00"
+            "time": "2024-03-03T11:51:16+00:00"
         },
         {
             "name": "phar-io/version",
