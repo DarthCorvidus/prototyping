@@ -1,6 +1,6 @@
 <?php
 namespace Examples\Server;
-class ServerProcess implements \plibv4\process\Timeshared {
+class ServerProcess implements \plibv4\process\Timeshared, \plibv4\process\TimeshareObserver {
 	private mixed $server;
 	private mixed $clientId = 0;
 	private \plibv4\process\Timeshare $timeshare;
@@ -32,10 +32,9 @@ class ServerProcess implements \plibv4\process\Timeshared {
 		}
 		$client = stream_socket_accept($this->server);
 		$clientStream = new StreamBinary($client, new \Examples\Server\Mode\Main());
+		$this->timeshare->addTimeshareObserver($this);
 		$this->timeshare->addTimeshared($clientStream);
 		echo "Client accepted, ".$this->timeshare->getProcessCount()." processes.".PHP_EOL;
-		$this->clientId++;
-		$this->connected++;
 	return true;
 	}
 	
@@ -58,5 +57,26 @@ class ServerProcess implements \plibv4\process\Timeshared {
 	public function terminate(): bool {
 		$this->terminated = true;
 		return $this->timeshare->terminate();
+	}
+
+	public function onAdd(\plibv4\process\Timeshare $timeshare, \plibv4\process\Timeshared $timeshared): void {
+		
+	}
+
+	public function onRemove(\plibv4\process\Timeshare $timeshare, \plibv4\process\Timeshared $timeshared, int $status): void {
+		if($timeshared instanceof \Examples\Server\StreamBinary) {
+			$this->connected--;
+			echo "Client disconnected, ".$this->connected." client(s).".PHP_EOL;
+			echo "Client processes: ".$this->timeshare->getProcessCount().PHP_EOL;
+		}
+	}
+
+	public function onStart(\plibv4\process\Timeshare $timeshare, \plibv4\process\Timeshared $timeshared): void {
+		if($timeshared instanceof \Examples\Server\StreamBinary) {
+			$this->connected++;
+			$this->clientId++;
+			echo "Client accepted as ".$this->clientId.", ".$this->connected." client(s).".PHP_EOL;
+			echo "Client processes: ".$this->timeshare->getProcessCount().PHP_EOL;
+		}
 	}
 }
