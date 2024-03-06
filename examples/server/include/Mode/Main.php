@@ -43,7 +43,7 @@ class Main implements \Examples\Server\StreamHandler {
 
 	public function rcvData(string $data) {
 		if($this->delegate) {
-			$this->delegate->putData($data);
+			$this->delegate->rcvData($data);
 		return;
 		}
 		$data = \Examples\Server\StreamBinary::getPayload($data);
