@@ -32,8 +32,7 @@ class ReceiveFileTest extends TestCase {
 		$first .= substr($random, 18, 4096-18);
 		
 		$receive = new Examples\Server\ReceiveFile(__DIR__);
-		$receive->onData($first);
-		$receive->loop();
+		$receive->rcvData($first);
 		$this->assertFileExists(__DIR__."/test.bin");
 		$receive->onTerminate();
 	}
@@ -46,7 +45,7 @@ class ReceiveFileTest extends TestCase {
 		$first .= substr($random, 18, 4096-18);
 
 		$receive = new Examples\Server\ReceiveFile(__DIR__);
-		$receive->onData($first);
+		$receive->rcvData($first);
 		
 		$reflection = new ReflectionClass($receive);
 		$name = $reflection->getProperty("filename");
@@ -69,8 +68,7 @@ class ReceiveFileTest extends TestCase {
 		$first .= substr($random, 18, 4096-18);
 		
 		$receive = new Examples\Server\ReceiveFile(__DIR__);
-		$receive->onData($first);
-		$receive->loop();
+		$receive->rcvData($first);
 		$this->assertFileExists(__DIR__."/test.bin");
 		$receive->onTerminate();
 	}

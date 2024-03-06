@@ -1,6 +1,6 @@
 <?php
 namespace Examples\Server;
-class SendFile implements StreamListener {
+class SendFile implements StreamHandler {
 	private string $path;
 	private int $size;
 	private mixed $handle;
@@ -44,23 +44,19 @@ class SendFile implements StreamListener {
 		return $this->left > 0 or $this->block === 0;
 	}
 
-	public function loop(): bool {
+	public function isActive(): bool {
 		return $this->left > 0 or $this->block === 0;
 	}
 
-	public function onConnect() {
+	public function rcvData(string $data) {
 		
 	}
 
-	public function onData(string $data) {
+	public function onDisconnect(): void {
 		
 	}
 
-	public function onDisconnect() {
-		
-	}
-
-	public function onTerminate() {
+	public function onTerminate(): void {
 		fclose($this->handle);
 	}
 }

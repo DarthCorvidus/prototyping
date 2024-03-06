@@ -27,7 +27,6 @@ class SendFileTest extends TestCase {
 		$xheader = chr(0).chr(0).chr(0).chr(0).chr(0).chr(0).chr(129).chr(65);
 		$xheader .= chr(0).chr(8);
 		$xheader .= "test.bin";
-		$send->loop();
 		$this->assertSame(true, $send->hasData());
 		$header = $send->getData();
 		$this->assertEquals($xheader, substr($header, 0, 18));
@@ -36,7 +35,7 @@ class SendFileTest extends TestCase {
 	
 	function testBlocksize() {
 		$send = new Examples\Server\SendFile(self::getPath());
-		while($send->loop() && $send->hasData()) {
+		while($send->isActive() && $send->hasData()) {
 			$this->assertSame(4096, strlen($send->getData()));
 		}
 	}
@@ -45,7 +44,7 @@ class SendFileTest extends TestCase {
 		$send = new Examples\Server\SendFile(self::getPath());
 		$expected = file_get_contents(self::getPath());
 		$data = "";
-		while($send->loop() && $send->hasData()) {
+		while($send->isActive() && $send->hasData()) {
 			$data .= $send->getData();
 		}
 		$this->assertSame($expected, substr($data, 18, self::SIZE));

@@ -1,6 +1,6 @@
 <?php
 namespace Examples\Server;
-class ReceiveFile implements StreamListener {
+class ReceiveFile implements StreamHandler {
 	private int $size = 0;
 	private bool $started = false;
 	private int $left = 0;
@@ -22,7 +22,7 @@ class ReceiveFile implements StreamListener {
 		return false;
 	}
 
-	public function loop(): bool {
+	public function isActive(): bool {
 		if($this->started == false) {
 			return true;
 		}
@@ -36,7 +36,7 @@ class ReceiveFile implements StreamListener {
 		
 	}
 
-	public function onData(string $data) {
+	public function rcvData(string $data) {
 		if($this->started==false) {
 			$reader = new \plibv4\Binary\StringReader($data, \plibv4\Binary\StringReader::BE);
 			$this->size = $reader->getUInt64();
@@ -63,11 +63,11 @@ class ReceiveFile implements StreamListener {
 		}
 	}
 
-	public function onDisconnect() {
+	public function onDisconnect(): void {
 		
 	}
 
-	public function onTerminate() {
+	public function onTerminate(): void {
 		if($this->handle!=null) {
 			fclose($this->handle);
 		}
