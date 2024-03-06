@@ -4,7 +4,7 @@ abstract class Stream implements \plibv4\process\Timeshared {
 	protected mixed $conn;
 	private bool $quit = false;
 	protected bool $terminated = false;
-	protected StreamListener $listener;
+	protected StreamHandler $streamHandler;
 	public function finish(): void {
 		fclose($this->conn);
 	}
@@ -25,9 +25,9 @@ abstract class Stream implements \plibv4\process\Timeshared {
 		if($this->conn === false) {
 			return false;
 		}
-		$loop = $this->listener->loop();
+		$loop = $this->streamHandler->isActive();
 		if(!$loop) {
-			$this->listener->onDisconnect();
+			#$this->listener->onDisconnect();
 		return false;
 		}
 		/**
@@ -35,7 +35,7 @@ abstract class Stream implements \plibv4\process\Timeshared {
 		 */
 		$read = array($this->conn);
 		$write = array();
-		if($this->listener->hasData()) {
+		if($this->streamHandler->hasData()) {
 			$write[] = $this->conn;
 		}
 		stream_select($read, $write, $except, 0);
@@ -63,11 +63,11 @@ abstract class Stream implements \plibv4\process\Timeshared {
 
 	public function terminate(): bool {
 		if(!$this->terminated) {
-			$this->listener->onTerminate();
+			$this->streamHandler->onTerminate();
 			$this->terminated = true;
 		return false;
 		}
-		if(!$this->listener->hasData()) {
+		if(!$this->streamHandler->hasData()) {
 			return true;
 		}
 	return false;

@@ -1,23 +1,23 @@
 <?php
 namespace Examples\Server;
 class StreamBinary extends Stream {
-	function __construct(mixed $conn, StreamListener $listener) {
+	function __construct(mixed $conn, StreamHandler $handler) {
 		$this->conn = $conn;
 		stream_set_blocking($this->conn, false);
-		$this->listener = $listener;
+		$this->streamHandler = $handler;
 	}
 
 	protected function read(): bool {
-		$input = fread($this->conn, $this->listener->getBlocksize());
+		$input = fread($this->conn, $this->streamHandler->getBlocksize());
 		if($input === "") {
 			return true;
 		}
-		$this->listener->onData($input);
+		$this->streamHandler->rcvData($input);
 	return true;
 	}
 	
 	protected function write(): bool {
-		$data = $this->listener->getData();
+		$data = $this->streamHandler->getData();
 		$written = fwrite($this->conn, $data);
 		if($written === false) {
 			throw new \RuntimeException("unable to write to stream");

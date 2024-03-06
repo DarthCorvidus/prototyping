@@ -1,13 +1,13 @@
 <?php
 namespace Examples\Server;
-class ClientMain implements \TermIOListener, StreamListener, \plibv4\process\Timeshared {
+class ClientMain implements \TermIOListener, StreamHandler, \plibv4\process\Timeshared {
 	private \TermIO $termio;
 	private \plibv4\process\Timeshare $timeshare;
 	private StreamBinary $stream;
 	private bool $active = true;
 	private string $command = "";
-	private ?StreamListener $prepared = null;
-	private ?StreamListener $delegate = null;
+	private ?StreamHandler $prepared = null;
+	private ?StreamHandler $delegate = null;
 	private int $started = 0;
 	function __construct() {
 		$this->termio = new \TermIO($this);
@@ -51,20 +51,24 @@ class ClientMain implements \TermIOListener, StreamListener, \plibv4\process\Tim
 		return $this->command != "";
 	}
 
-	public function loop(): bool {
-		if($this->delegate != null && $this->delegate->loop() == false) {
+	public function isActive(): bool {
+		if($this->delegate != null && $this->delegate->isActive() == false) {
 			echo "Switching from delegate ".$this->delegate::class.PHP_EOL;
 			$this->delegate->onTerminate();
 			$this->delegate = null;
 		}
 		return true;
 	}
-
+	
+	public function loop(): bool {
+		return $this->isActive();
+	}
+	
 	public function onConnect() {
 		
 	}
 
-	public function onData(string $data) {
+	public function rcvData(string $data) {
 		if($this->delegate != null) {
 			$this->delegate->onData($data);
 		return;
@@ -77,11 +81,11 @@ class ClientMain implements \TermIOListener, StreamListener, \plibv4\process\Tim
 		$this->termio->addBuffer($data);
 	}
 
-	public function onDisconnect() {
+	public function onDisconnect(): void {
 		
 	}
 	
-	public function onTerminate() {
+	public function onTerminate(): void {
 		;
 	}
 

@@ -1,10 +1,10 @@
 <?php
 namespace Examples\Server\Mode;
-class Main implements \Examples\Server\StreamListener {
+class Main implements \Examples\Server\StreamHandler {
 	private bool $active = true;
 	private array $buffer = array();
 	private int $requests = 0;
-	private ?\Examples\Server\StreamListener $delegate = null;
+	private ?\Examples\Server\StreamHandler $delegate = null;
 	function __construct() {
 		$this->buffer[] = "Welcome to experimental server 0.1, use 'help' for help.";
 	}
@@ -25,9 +25,9 @@ class Main implements \Examples\Server\StreamListener {
 	return false;
 	}
 
-	public function loop(): bool {
+	public function isActive(): bool {
 		if($this->delegate) {
-			if(!$this->delegate->loop()) {
+			if(!$this->delegate->isActive()) {
 				echo "Switching from delegate ".$this->delegate::class.PHP_EOL;
 				$this->delegate = null;
 			}
@@ -41,13 +41,9 @@ class Main implements \Examples\Server\StreamListener {
 	return false;
 	}
 
-	public function onConnect() {
-		
-	}
-
-	public function onData(string $data) {
+	public function rcvData(string $data) {
 		if($this->delegate) {
-			$this->delegate->onData($data);
+			$this->delegate->putData($data);
 		return;
 		}
 		$data = \Examples\Server\StreamBinary::getPayload($data);
@@ -90,10 +86,10 @@ class Main implements \Examples\Server\StreamListener {
 	$this->buffer[] = "Unknown command.";
 	}
 
-	public function onDisconnect() {
+	public function onDisconnect(): void {
 	}
 	
-	public function onTerminate() {
+	public function onTerminate(): void {
 		if($this->delegate) {
 			$this->delegate->onTerminate();
 			$this->delegate = null;

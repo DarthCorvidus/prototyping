@@ -1,6 +1,6 @@
 <?php
 namespace Examples\Server;
-class Counter implements StreamListener {
+class Counter implements StreamHandler {
 	private $seconds = 0;
 	private $times = 0;
 	private $last = 0;
@@ -32,19 +32,15 @@ class Counter implements StreamListener {
 	#return false;
 	}
 
-	public function onConnect() {
-		
-	}
-
-	public function onData(string $data) {
+	public function rcvData(string $data) {
 		echo "Ignoring data.".PHP_EOL;
 	}
 
-	public function onDisconnect() {
+	public function onDisconnect(): void {
 		
 	}
 
-	public function loop(): bool {
+	public function isActive(): bool {
 		$this->delta = microtime(true)-$this->last;
 		if($this->current < $this->times) {
 			return true;
@@ -52,7 +48,7 @@ class Counter implements StreamListener {
 	return false;
 	}
 
-	public function onTerminate() {
+	public function onTerminate(): void {
 		
 	}
 
