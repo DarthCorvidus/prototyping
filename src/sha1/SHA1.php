@@ -1,5 +1,6 @@
 <?php
-abstract class SHA1 implements \plibv4\process\Timeshared {
+use plibv4\process\Task;
+abstract class SHA1 implements Task {
 	const H0 = 0x67452301;
 	const H1 = 0xEFCDAB89;
 	const H2 = 0x98BADCFE;
@@ -134,7 +135,7 @@ abstract class SHA1 implements \plibv4\process\Timeshared {
 	return "";
 	}
 
-	function start(): void {
+	function __tsStart(): void {
 		$this->v0 = self::H0;
 		$this->v1 = self::H1;
 		$this->v2 = self::H2;
@@ -142,7 +143,7 @@ abstract class SHA1 implements \plibv4\process\Timeshared {
 		$this->v4 = self::H4;
 	}
 	
-	function loop(): bool {
+	function __tsLoop(): bool {
 		#plibv4\profiler\Profiler::startTimer("getData");
 		$chunk = $this->getChunk();
 		#plibv4\profiler\Profiler::endTimer("getData");
@@ -183,23 +184,27 @@ abstract class SHA1 implements \plibv4\process\Timeshared {
 	}
 
 	function getHash() {
-		$this->start();
-		while($this->loop()) {
+		$this->__tsStart();
+		while($this->__tsLoop()) {
 
 		}
 	return sprintf('%08x%08x%08x%08x%08x', $this->v0, $this->v1, $this->v2, $this->v3, $this->v4);
 	}
 
-	function pause(): void {
+	function __tsPause(): void {
 	}
 	
-	function resume(): void {
+	function __tsResume(): void {
 	}
 	
-	function terminate(): bool {
+	function __tsTerminate(): bool {
 		return true;
 	}
 	
-	function kill(): void {
+	function __tsKill(): void {
+	}
+	
+	function __tsError(\Exception $e, int $step): void {
+		throw $e;
 	}
 }

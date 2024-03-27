@@ -11,7 +11,7 @@ class SHA1String extends SHA1 {
 		$this->hashObserver = $hashObserver;
 	}
 	
-	public function finish(): void {
+	public function __tsFinish(): void {
 		if($this->hashObserver!=null) {
 			$this->hashObserver->onHashed($this, $this->result);
 		}
