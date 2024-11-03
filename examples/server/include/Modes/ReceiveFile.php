@@ -60,6 +60,7 @@ class ReceiveFile implements StreamHandler {
 		} else {
 			$written = fwrite($this->handle, substr($data, 0, $this->left));
 			$this->left -= $written;
+			echo "Received ".number_format($this->size, 0, ",", ".")." bytes.".PHP_EOL;
 		}
 	}
 
