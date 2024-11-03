@@ -1,5 +1,5 @@
 <?php
-class TermIO implements \plibv4\process\Timeshared {
+class TermIO implements \plibv4\process\Task {
 	private TermIOListener $listener;
 	private array $outputBuffer = array();
 	private bool $terminated = false;
@@ -14,7 +14,7 @@ class TermIO implements \plibv4\process\Timeshared {
 		$this->outputBuffer[] = $output;
 	}
 	
-	public function loop(): bool {
+	public function __tsLoop(): bool {
 		if(!empty($this->outputBuffer)) {
 			fwrite(STDOUT, array_shift($this->outputBuffer).PHP_EOL);
 		return true;
@@ -31,27 +31,31 @@ class TermIO implements \plibv4\process\Timeshared {
 	return true;
 	}
 
-	public function start(): void {
+	public function __tsStart(): void {
 		
 	}
 
-	public function finish(): void {
+	public function __tsFinish(): void {
 		
 	}
 
-	public function kill(): void {
+	public function __tsKill(): void {
 		
 	}
 
-	public function pause(): void {
+	public function __tsPause(): void {
 		
 	}
 
-	public function resume(): void {
+	public function __tsResume(): void {
 		
 	}
 
-	public function terminate(): bool {
+	public function __tsTerminate(): bool {
 		return empty($this->outputBuffer);
+	}
+	
+	public function __tsError(\Exception $e, int $step): void {
+		;
 	}
 }
