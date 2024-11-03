@@ -37,8 +37,8 @@ class ServerProcess implements Task, TimeshareObserver {
 		$client = stream_socket_accept($this->server);
 		$clientStream = new StreamBinary($client, new \Examples\Server\Mode\Main());
 		$this->sched->addTimeshareObserver($this);
-		$this->sched->addTimeshared($clientStream);
-		echo "Client accepted, ".$this->sched->getProcessCount()." processes.".PHP_EOL;
+		$this->sched->addTask($clientStream);
+		echo "Client accepted, ".$this->sched->getTaskCount()." processes.".PHP_EOL;
 	return true;
 	}
 	
@@ -80,7 +80,7 @@ class ServerProcess implements Task, TimeshareObserver {
 			$this->connected++;
 			$this->clientId++;
 			echo "Client accepted as ".$this->clientId.", ".$this->connected." client(s).".PHP_EOL;
-			echo "Client processes: ".$this->sched->getProcessCount().PHP_EOL;
+			echo "Client processes: ".$this->sched->getTaskCount().PHP_EOL;
 		}
 	}
 
