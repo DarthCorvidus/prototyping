@@ -26,9 +26,9 @@ class ServerProcess implements Task, TimeshareObserver {
 
 	public function __tsLoop(): bool {
 		if($this->terminated) {
-			return $this->sched->loop();
+			return $this->sched->__tsLoop();
 		}
-		$this->sched->loop();
+		$this->sched->__tsLoop();
 		$read = array($this->server);
 		$write = array();
 		if(stream_select($read, $write, $except, 0) < 1) {
@@ -60,7 +60,7 @@ class ServerProcess implements Task, TimeshareObserver {
 
 	public function __tsTerminate(): bool {
 		$this->terminated = true;
-		return $this->sched->terminate();
+		return $this->sched->__tsTerminate();
 	}
 
 	public function onAdd(Scheduler $sched, Task $task): void {

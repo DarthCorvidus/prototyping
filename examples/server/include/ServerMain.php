@@ -15,8 +15,8 @@ class ServerMain implements \TermIOListener {
 		$this->termio->addBuffer("Experimental file server 0.1");
 		$this->termio->addBuffer("Use 'halt' to shut down server or 'status' for information.");
 		$this->server = new ServerProcess($this->timeshare);
-		$this->timeshare->addTimeshared($this->server);
-		$this->timeshare->addTimeshared($this->termio);
+		$this->timeshare->addTask($this->server);
+		$this->timeshare->addTask($this->termio);
 		$this->started = time();
 	}
 	
@@ -30,7 +30,7 @@ class ServerMain implements \TermIOListener {
 	
 	public static function halt() {
 		self::$singleton->termio->addBuffer("Shutting down server.");
-		self::$singleton->timeshare->terminate();
+		self::$singleton->timeshare->__tsTerminate();
 	}
 
 	public static function status(): array {
