@@ -1,6 +1,8 @@
 <?php
 namespace Examples\Server;
-class ClientMain implements \TermIOListener, StreamHandler, \plibv4\process\Timeshared {
+use plibv4\process\Task;
+use plibv4\process\Timeshare;
+class ClientMain implements \TermIOListener, StreamHandler, Task {
 	private \TermIO $termio;
 	private \plibv4\process\Timeshare $timeshare;
 	private StreamBinary $stream;
@@ -14,10 +16,10 @@ class ClientMain implements \TermIOListener, StreamHandler, \plibv4\process\Time
 		$client = stream_socket_client("tcp://0.0.0.0:8000", $errno, $errstr);
 		stream_set_blocking($client, false);
 		$this->stream = new StreamBinary($client, $this);
-		$this->timeshare = new \plibv4\process\Timeshare();
-		$this->timeshare->addTimeshared($this);
-		$this->timeshare->addTimeshared($this->termio);
-		$this->timeshare->addTimeshared($this->stream);
+		$this->timeshare = new Timeshare();
+		$this->timeshare->addTask($this);
+		$this->timeshare->addTask($this->termio);
+		$this->timeshare->addTask($this->stream);
 		$this->started = time();
 	}
 
@@ -60,7 +62,7 @@ class ClientMain implements \TermIOListener, StreamHandler, \plibv4\process\Time
 		return true;
 	}
 	
-	public function loop(): bool {
+	public function __tsLoop(): bool {
 		return $this->isActive();
 	}
 	
@@ -121,27 +123,27 @@ class ClientMain implements \TermIOListener, StreamHandler, \plibv4\process\Time
 		$this->timeshare->run();
 	}
 
-	public function finish(): void {
+	public function __tsFinish(): void {
 		
 	}
 
-	public function kill(): void {
+	public function __tsKill(): void {
 		
 	}
 
-	public function pause(): void {
+	public function __tsPause(): void {
 		
 	}
 
-	public function resume(): void {
+	public function __tsResume(): void {
 		
 	}
 
-	public function start(): void {
+	public function __tsStart(): void {
 		
 	}
 
-	public function terminate(): bool {
+	public function __tsTerminate(): bool {
 		return true;
 	}
 
@@ -150,5 +152,9 @@ class ClientMain implements \TermIOListener, StreamHandler, \plibv4\process\Time
 			return $this->delegate->getBlocksize();
 		}
 		return 512;
+	}
+
+	public function __tsError(\Exception $e, int $step): void {
+		
 	}
 }

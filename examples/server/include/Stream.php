@@ -1,6 +1,7 @@
 <?php
 namespace Examples\Server;
-abstract class Stream implements \plibv4\process\Timeshared {
+use plibv4\process\Task;
+abstract class Stream implements Task {
 	protected mixed $conn;
 	private bool $quit = false;
 	protected bool $terminated = false;
@@ -9,7 +10,7 @@ abstract class Stream implements \plibv4\process\Timeshared {
 		fclose($this->conn);
 	}
 
-	public function kill(): void {
+	public function __tsKill(): void {
 		
 	}
 
@@ -21,7 +22,7 @@ abstract class Stream implements \plibv4\process\Timeshared {
 		$this->quit = true;
 	}
 	
-	public function loop(): bool {
+	public function __tsLoop(): bool {
 		if($this->conn === false) {
 			return false;
 		}
@@ -49,19 +50,19 @@ abstract class Stream implements \plibv4\process\Timeshared {
 	return true;
 	}
 	
-	public function pause(): void {
+	public function __tsPause(): void {
 		
 	}
 
-	public function resume(): void {
+	public function __tsResume(): void {
 		
 	}
 
-	public function start(): void {
+	public function __tsStart(): void {
 		
 	}
 
-	public function terminate(): bool {
+	public function __tsTerminate(): bool {
 		if(!$this->terminated) {
 			$this->streamHandler->onTerminate();
 			$this->terminated = true;
@@ -71,5 +72,13 @@ abstract class Stream implements \plibv4\process\Timeshared {
 			return true;
 		}
 	return false;
+	}
+	
+	public function __tsFinish(): void {
+		;
+	}
+	
+	public function __tsError(\Exception $e, int $step): void {
+		;
 	}
 }
