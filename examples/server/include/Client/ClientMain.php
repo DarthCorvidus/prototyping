@@ -77,7 +77,7 @@ class ClientMain implements \TermIOListener, StreamHandler, Task {
 		}
 		$data = \Examples\Server\StreamBinary::getPayload($data);
 		if($data == "quit") {
-			$this->timeshare->terminate();
+			$this->timeshare->__tsTerminate();
 		return;
 		}
 		$this->termio->addBuffer($data);
@@ -96,7 +96,7 @@ class ClientMain implements \TermIOListener, StreamHandler, Task {
 			$this->termio->addBuffer("Client status:");
 			$convert = new \ConvertTime(\ConvertTime::SECONDS, \ConvertTime::HMS);
 			$this->termio->addBuffer("  Runtime: ".$convert->convert(time()-$this->started));
-			$this->termio->addBuffer("  Local process count: ".$this->timeshare->getProcessCount());
+			$this->termio->addBuffer("  Local process count: ".$this->timeshare->getTaskCount());
 			$this->command = "status";
 		return;
 		}

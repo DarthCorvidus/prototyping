@@ -71,7 +71,7 @@ class ServerProcess implements Task, TimeshareObserver {
 		if($task instanceof \Examples\Server\StreamBinary) {
 			$this->connected--;
 			echo "Client disconnected, ".$this->connected." client(s).".PHP_EOL;
-			echo "Client processes: ".$this->sched->getProcessCount().PHP_EOL;
+			echo "Client processes: ".$this->sched->getTaskCount().PHP_EOL;
 		}
 	}
 
