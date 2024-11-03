@@ -7,7 +7,7 @@ class Client {
 		$client = stream_socket_client("tcp://0.0.0.0:8000", $errno, $errstr);
 		stream_set_blocking($client, false);
 		$this->streamHub = new StreamHub();
-		$this->streamHub->addClient($client, new FileSender($argv[1]));
+		$this->streamHub->addClient($client, new FileSender($argv[1], $this->streamHub));
 	}
 	function run() {
 		$this->streamHub->listen();

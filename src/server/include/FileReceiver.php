@@ -4,8 +4,9 @@ class FileReceiver implements ClientListener {
 	private int $size = 0;
 	private int $left = 0;
 	private int $received = 0;
-	function __construct() {
-		
+	private StreamHub $hub;
+	function __construct(StreamHub $hub) {
+		$this->hub = $hub;
 	}
 
 	public function getBlocksize(): int {

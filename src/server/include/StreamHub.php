@@ -7,6 +7,7 @@ class StreamHub {
 	private array $emptyCount;
 	private ServerListener $serverListener;
 	private array $clientListeners;
+	private $shutdown = false;
 	function __construct() {
 		$this->clients = array();
 	}
@@ -60,6 +61,13 @@ class StreamHub {
 		unset($this->clientListeners[$key]);
 	}
 	
+	public function shutdown() {
+		foreach($this->clients as $key => $value) {
+			$this->disconnect($key);
+		}
+		$this->shutdown = true;
+	}
+	
 	function listen() {
 		$i = 0;
 		while(TRUE) {
@@ -73,6 +81,9 @@ class StreamHub {
 				if($this->clientListeners[$key]->hasWrite()) {
 					$write[$key] = $value;
 				}
+			}
+			if($this->shutdown) {
+				return;
 			}
 			try {
 				if(@stream_select($read, $write, $except, $tv_sec = 5) < 1) {
